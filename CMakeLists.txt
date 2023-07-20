@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
+add_executable(Bittorrent app/main.cpp include/Bencode/Exceptions/NoSuchFieldException.hpp include/Utils/StringMethods.hpp src/Utils/StringMethods.cpp)
+
 add_subdirectory(src)
-
-add_executable(Bittorrent app/main.cpp include/TorrentFileParser.hpp src/TorrentFileParser.cpp tests/main_test.cpp tests/TorrentFileParserTests.hpp tests/BencodeParsingTests.hpp src/Bencode/BencodeParser.cpp include/Bencode/BencodeParser.hpp)
-
 add_subdirectory(tests)
