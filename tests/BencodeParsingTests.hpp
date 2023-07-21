@@ -6,6 +6,7 @@
 
 #include <gtest/gtest.h>
 #include "BencodeParser.hpp"
+#include "Exceptions/NoSuchFieldException.hpp"
 #include <sstream>
 
 
@@ -106,4 +107,102 @@ TEST(BencodeParserTest, testParseListTwice) {
     for(int i = 1; i <= listSize; ++i) {
         ASSERT_EQ(result[i-1], fieldValue + std::to_string(i));
     }
+}
+
+TEST(BencodeParserTest, testParseDictionaryAsList) {
+    const std::string fieldName = "someFieldName";
+    const std::string fieldValue = "someFieldValue";
+
+    std::stringstream ss;
+    ss << 'd' << fieldName.size() << ':' << fieldName << fieldValue.size() << ':' << fieldValue << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    StringVector result;
+
+    ASSERT_NO_THROW(result = parser.getList(fieldName));
+    ASSERT_TRUE(result.size() == 1);
+    ASSERT_EQ(result[0], fieldValue);
+}
+
+TEST(BencodeParserTest, testGetUnexistFieldValue) {
+    const std::string fieldName = "someFieldName";
+    const std::string fieldValue = "someFieldValue";
+
+    std::stringstream ss;
+    ss << 'd' << fieldName.size() << ':' << fieldName << fieldValue.size() << ':' << fieldValue << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    const std::string wrongFieldName = "wrongFieldName";
+
+    ASSERT_THROW(parser.getValue(wrongFieldName), NoSuchFieldException);
+}
+
+TEST(BencodeParserTest, testGetUnexistFieldValueTwice) {
+    const std::string fieldName = "someFieldName";
+    const std::string fieldValue = "someFieldValue";
+
+    std::stringstream ss;
+    ss << 'd' << fieldName.size() << ':' << fieldName << fieldValue.size() << ':' << fieldValue << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    const std::string wrongFieldName = "wrongFieldName";
+
+    ASSERT_THROW(parser.getValue(wrongFieldName), NoSuchFieldException);
+    ASSERT_THROW(parser.getValue(wrongFieldName), NoSuchFieldException);
+}
+
+TEST(BencodeParserTest, testGetUnexistList) {
+    const std::string fieldName = "prettyList";
+    const std::string fieldValue = "IAmListElement";
+    const int listSize = 5; // for simple logic test should be not greater than 9
+
+    std::stringstream ss;
+
+    ss << "d" << fieldName.size() << ':' << fieldName << 'l' << fieldValue.size() + 1 << ':';
+
+    for(int i = 1; i < listSize; ++i) {
+        ss << fieldValue << i << 'e' << 'l' << fieldValue.size() + 1 << ':';
+    }
+    ss << fieldValue << listSize << 'e' << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    const std::string wrongFieldName = "wrongFieldName";
+
+    ASSERT_THROW(parser.getList(wrongFieldName), NoSuchFieldException);
+}
+
+TEST(BencodeParserTest, testGetUnexistListTwice) {
+    const std::string fieldName = "prettyList";
+    const std::string fieldValue = "IAmListElement";
+    const int listSize = 5; // for simple logic test should be not greater than 9
+
+    std::stringstream ss;
+
+    ss << "d" << fieldName.size() << ':' << fieldName << 'l' << fieldValue.size() + 1 << ':';
+
+    for(int i = 1; i < listSize; ++i) {
+        ss << fieldValue << i << 'e' << 'l' << fieldValue.size() + 1 << ':';
+    }
+    ss << fieldValue << listSize << 'e' << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    const std::string wrongFieldName = "wrongFieldName";
+
+    ASSERT_THROW(parser.getList(wrongFieldName), NoSuchFieldException);
+    ASSERT_THROW(parser.getList(wrongFieldName), NoSuchFieldException);
 }

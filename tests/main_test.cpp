@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 
 #include "BencodeParsingTests.hpp"
+#include "StringOperationsTest.hpp"
+#include "FileReaderTests.hpp"
 
 int main(int argc, char** argv) {
     using testing::InitGoogleTest;

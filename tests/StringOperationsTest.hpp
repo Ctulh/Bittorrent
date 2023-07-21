@@ -1,13 +1,15 @@
 
 #include "gtest/gtest.h"
-#include "Utils/StringOperations.hpp"
+#include "StringMethods.hpp"
+
+using namespace StringMethods;
 
 TEST(StringOperationsTest, test_split_operation_with_existing_delimiters) {
     std::string const stringForSplit = "Text0 Text1 Text2";
     char const delimiter = ' ';
 
     StringVector result;
-    ASSERT_NO_THROW(result = StringOperations::split(stringForSplit, delimiter));
+    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
 
     ASSERT_EQ(result.size(), 3);
 
@@ -21,7 +23,7 @@ TEST(StringOperationsTest, test_split_operation_with_existing_delimiters_in_a_ro
     char const delimiter = ' ';
 
     StringVector result;
-    ASSERT_NO_THROW(result = StringOperations::split(stringForSplit, delimiter));
+    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
 
     ASSERT_EQ(result.size(), 3);
 
@@ -36,7 +38,7 @@ TEST(StringOperationsTest, test_split_operation_without_existing_delimiters) {
     char const delimiter = ',';
 
     StringVector result;
-    ASSERT_NO_THROW(result = StringOperations::split(stringForSplit, delimiter));
+    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
 
     ASSERT_EQ(result.size(), 1);
 
@@ -48,7 +50,7 @@ TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end) {
     std::string const stringForStrip = " " + text + " ";
 
     std::string result;
-    ASSERT_NO_THROW(result = StringOperations::strip(stringForStrip));
+    ASSERT_NO_THROW(result = strip(stringForStrip));
 
     ASSERT_EQ(result, text);
 }
@@ -58,7 +60,7 @@ TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end_with_more_
     std::string const stringForStrip = "   " + text + "             ";
 
     std::string result;
-    ASSERT_NO_THROW(result = StringOperations::strip(stringForStrip));
+    ASSERT_NO_THROW(result = strip(stringForStrip));
 
     ASSERT_EQ(result, text);
 }
@@ -68,7 +70,7 @@ TEST(StringOperationsTest, test_strip_with_spaces_only_at_begin) {
     std::string const stringForStrip = "   " + text;
 
     std::string result;
-    ASSERT_NO_THROW(result = StringOperations::strip(stringForStrip));
+    ASSERT_NO_THROW(result = strip(stringForStrip));
 
     ASSERT_EQ(result, text);
 }
@@ -78,7 +80,7 @@ TEST(StringOperationsTest, test_strip_with_spaces_only_at_end) {
     std::string const stringForStrip = text + "     ";
 
     std::string result;
-    ASSERT_NO_THROW(result = StringOperations::strip(stringForStrip));
+    ASSERT_NO_THROW(result = strip(stringForStrip));
 
     ASSERT_EQ(result, text);
 }
@@ -88,7 +90,7 @@ TEST(StringOperationsTest, test_strip_without_spaces) {
     std::string const stringForStrip = text;
 
     std::string result;
-    ASSERT_NO_THROW(result = StringOperations::strip(stringForStrip));
+    ASSERT_NO_THROW(result = strip(stringForStrip));
 
     ASSERT_EQ(result, text);
 }
