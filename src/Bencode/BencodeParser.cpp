@@ -190,12 +190,14 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
            else if(m_data[index] == 'i') {
                readNumber(index);
            }
-           else {
-               while (carry != 0 && index < dataSize && m_data[index] == 'e') {
-                   --carry;
-                   ++index;
-               }
+           else if(m_data[index] == 'l') {
+               readList(index);
            }
+           while (carry != 0 && index < dataSize && m_data[index] == 'e') {
+               --carry;
+               ++index;
+           }
+
        }
     }
     if (begin == -1)
@@ -216,6 +218,7 @@ std::string BencodeParser::readNumber(std::size_t& index) const {
         result += m_data[index];
         ++index;
     }
+    ++index;
     return result;
 }
 
