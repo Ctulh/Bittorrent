@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD 23)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
-add_executable(Bittorrent app/main.cpp include/Bencode/Exceptions/NoSuchFieldException.hpp include/Utils/StringMethods.hpp src/Utils/StringMethods.cpp include/FileReader/FileReader.hpp include/FileReader/NoSuchFileException.hpp src/FileReader/FileReader.cpp src/FileReader/NoSuchFileException.cpp include/FileReader/WrongPathException.hpp src/FileReader/WrongPathException.cpp)
+#add_compile_options(-Wextra -Wconversion -Wpedantic -Wall)
+
+add_executable(Bittorrent app/main.cpp)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+target_link_libraries(Bittorrent Inet Utils BencodeParser FileReader)
+

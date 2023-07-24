@@ -32,17 +32,27 @@ std::string BencodeParser::operator[](const std::string &fieldName) {
         throw NoSuchFieldException(fieldName);
     }
     it += fieldName.size();
-    int numberOfBytesInFieldValue = 0;
-    const int strSize = m_data.size();
 
-    while(it < strSize && m_data[it] != ':') {
-        numberOfBytesInFieldValue *= 10;
-        numberOfBytesInFieldValue += m_data[it] - '0';
-        ++it;
+    const std::size_t dataSize = m_data.size();
+
+    std::string fieldValue;
+
+    if(m_data[it] == 'i') { // 'i' means integer value
+        fieldValue = readNumber(it);
+    } else if(m_data[it] == 'd') { // 'd' means dictionary value
+       fieldValue = readDictionary(it);
+    } else if(m_data[it] == 'l') { // 'l' means list value
+        StringVector strings = readList(it);
+        fieldValue = std::accumulate(strings.begin(), strings.end(), std::string(),
+                                                        [this](std::string const& left, std::string const& right) {
+                                                            if(left.empty())
+                                                                return right;
+                                                            return left + this->m_listSeparator + right;
+                                                        });
+    } else if(std::isdigit(m_data[it])) { // no 'i', 'l', 'd' after field name means that this is string
+        fieldValue = readString(it);
     }
-    std::size_t beginOfTheFieldValue = it+1;
 
-    std::string fieldValue = m_data.substr(beginOfTheFieldValue, numberOfBytesInFieldValue);
     m_fieldValues[fieldName] = fieldValue;
     return fieldValue;
 }
@@ -66,49 +76,146 @@ StringVector BencodeParser::getList(const std::string &fieldName) {
         m_fieldValues[fieldName] = OptionalString();
         throw NoSuchFieldException(fieldName);
     }
+    it += fieldName.size();
+    StringVector strings = readList(it);
+    std::string fieldValue = std::accumulate(strings.begin(), strings.end(), std::string(),
+                                 [this](std::string const& left, std::string const& right) {
+                                     if(left.empty())
+                                         return right;
+                                     return left + this->m_listSeparator + right;
+                                 });
+    m_fieldValues[fieldName] = fieldValue;
+    return strings;
+}
+
+StringVector BencodeParser::readList(std::size_t& index) const {
+    const std::size_t dataSize = m_data.size();
+
+    if(index >= dataSize)
+        return {};
 
     int carry = 0;
-    it += fieldName.size();
 
-    const int dataSize = m_data.size();
+    if(m_data[index] == 'l')
+        ++index;
 
-    if(it < dataSize && m_data[it] != 'l') {
-        return {getValue(fieldName)};
-    }
-
-    ++it;
     ++carry;
 
+    char listElementType;
+    if(index < dataSize) {
+        if(m_data[index] == 'd')
+            listElementType = 'd';
+        else if(m_data[index] == 'l')
+            listElementType = 'l';
+        else if(m_data[index] == 'i')
+            listElementType = 'i';
+        else
+            listElementType = 's';
+    }
     StringVector output;
-    while(carry != 0) {
-        int listElementBytesLength = 0;
-        char ch = m_data[it];
-        while(it < dataSize && isdigit(m_data[it])) {
-            listElementBytesLength *= 10;
-            listElementBytesLength += m_data[it] - '0';
-            ++it;
+    while(index < dataSize &&carry != 0) {
+        if(listElementType == 'd') {
+            output.push_back(readDictionary(index));
         }
-        ++it;
-        output.push_back(m_data.substr(it, listElementBytesLength));
-        it += listElementBytesLength;
-        if(it < dataSize && m_data[it] == 'e') {
+        else if(listElementType == 'i') {
+            output.push_back(readNumber(index));
+        }
+        else if(listElementType == 's') {
+            output.push_back(readString(index));
+        }
+        if(index < dataSize && m_data[index] == 'e') {
             --carry;
-            ++it;
+            ++index;
         }
-        if(it < dataSize && m_data[it] == 'l') {
+        if(index < dataSize && m_data[index] == 'l') {
             ++carry;
-            ++it;
+            ++index;
         }
     }
-    std::string accumulatorString = std::accumulate(output.begin(), output.end(), std::string(),
-                                [separator](std::string const& left, std::string const& right) {
-                                                    if(left.empty())
-                                                        return right;
-                                                    return left + separator + right;
-                                          });
-
-    m_fieldValues[fieldName] = accumulatorString;
     return output;
 }
 
+
+std::string BencodeParser::readString(std::size_t& index) const {
+    const std::size_t dataSize = m_data.size();
+
+    if(index >= dataSize)
+        return "";
+
+    if(m_data[index] == ':')
+        ++index;
+
+    int numberOfBytesInFieldValue = 0;
+    auto curr = m_data[index];
+    while (index < dataSize && isdigit(m_data[index])) {
+        numberOfBytesInFieldValue *= 10;
+        numberOfBytesInFieldValue += m_data[index] - '0';
+        ++index;
+    }
+    std::size_t begin = index+1;
+    index += numberOfBytesInFieldValue;
+
+    std::string result =  m_data.substr(begin, index - begin + 1);
+    ++index; // because string don't have end symbol in bencode so we should increment index to go to another sequence
+    return result;
+}
+
+std::string BencodeParser::readDictionary(std::size_t& index) const {
+    const std::size_t dataSize = m_data.size();
+    int carry = 1;
+
+    if(index < dataSize && m_data[index] == 'd')
+        ++index;
+
+    int begin = -1;
+
+    while(carry != 0 && index < dataSize) {
+       int dataLengthInBytes = 0;
+       while(index < dataSize && std::isdigit(m_data[index])) {
+            dataLengthInBytes *= 10;
+            dataLengthInBytes += m_data[index] - '0';
+            ++index;
+       }
+       ++index;
+       if(begin < 0) {
+           begin = index;
+       }
+
+       index += dataLengthInBytes;
+       if(index < dataSize) {
+           if(m_data[index] == 'd') {
+               ++carry;
+               ++index;
+           }
+           else if(m_data[index] == 'i') {
+               readNumber(index);
+           }
+           else {
+               while (carry != 0 && index < dataSize && m_data[index] == 'e') {
+                   --carry;
+                   ++index;
+               }
+           }
+       }
+    }
+    if (begin == -1)
+        return "";
+    std::string res = m_data.substr(begin, index - (begin+1));
+    return res;
+}
+
+std::string BencodeParser::readNumber(std::size_t& index) const {
+    const std::size_t dataSize = m_data.size();
+
+    if(index >= dataSize)
+        return "";
+    if(m_data[index] == 'i')
+        ++index;
+    std::string result;
+    while(index < dataSize && m_data[index] != 'e') {
+        result += m_data[index];
+        ++index;
+    }
+    return result;
+}
 

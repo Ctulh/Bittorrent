@@ -3,11 +3,7 @@
 //
 
 #include "FileReader.hpp"
-#include "../../include/FileReader/FileReader.hpp"
-
 #include "StringMethods.hpp"
-#include "../../include/Utils/StringMethods.hpp"
-
 #include "WrongPathException.hpp"
 #include "NoSuchFileException.hpp"
 
@@ -17,7 +13,6 @@
 #include <regex>
 
 FileReader::FileReader(std::string const& path): m_path(path) {
-
     StringVector pathComponents;
     pathComponents = StringMethods::split(path, std::filesystem::path::preferred_separator);
     const int componentsAmount = pathComponents.size();
@@ -38,6 +33,7 @@ FileReader::FileReader(std::string const& path): m_path(path) {
             throw WrongPathException(currPath);
         }
         currPath += pathComponents[i];
+        currPath += std::filesystem::path::preferred_separator;
     }
 
     currPath+= pathComponents.back();

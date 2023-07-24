@@ -23,6 +23,13 @@ public:
     StringVector getList(std::string const& fieldName);
 
 private:
+    std::string readNumber(std::size_t& index) const;
+    std::string readDictionary(std::size_t& index) const;
+    std::string readString(std::size_t& index) const;
+    StringVector readList(std::size_t& index) const;
+
+private:
     std::unordered_map<std::string, OptionalString> m_fieldValues;
     std::string m_data;
+    const char m_listSeparator = ',';
 };
