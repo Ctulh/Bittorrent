@@ -8,6 +8,7 @@
 #include "StringMethods.hpp"
 #include <stack>
 #include <numeric>
+#include <algorithm>
 
 /**
  * BencodeParser constructor
@@ -164,22 +165,18 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
     const std::size_t dataSize = m_data.size();
     int carry = 1;
 
+    int begin = index;
     if(index < dataSize && m_data[index] == 'd')
         ++index;
 
-    int begin = -1;
-
     while(carry != 0 && index < dataSize) {
-       int dataLengthInBytes = 0;
-       while(index < dataSize && std::isdigit(m_data[index])) {
-            dataLengthInBytes *= 10;
-            dataLengthInBytes += m_data[index] - '0';
-            ++index;
-       }
-       ++index;
-       if(begin < 0) {
-           begin = index;
-       }
+        int dataLengthInBytes = 0;
+        while(index < dataSize && std::isdigit(m_data[index])) {
+             dataLengthInBytes *= 10;
+             dataLengthInBytes += m_data[index] - '0';
+             ++index;
+        }
+        ++index;
 
        index += dataLengthInBytes;
        if(index < dataSize) {
@@ -202,7 +199,7 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
     }
     if (begin == -1)
         return "";
-    std::string res = m_data.substr(begin, index - (begin+1));
+    std::string res = m_data.substr(begin, index - begin);
     return res;
 }
 

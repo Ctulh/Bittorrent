@@ -7,6 +7,7 @@
 #include "BencodeParsingTests.hpp"
 #include "StringOperationsTest.hpp"
 #include "FileReaderTests.hpp"
+#include "LoggerTests.hpp"
 
 int main(int argc, char** argv) {
     using testing::InitGoogleTest;

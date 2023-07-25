@@ -44,49 +44,6 @@ TEST(BencodeParserTest, testParseSimpleBencodeStringTwice) {
     ASSERT_EQ(result, fieldValue);
 }
 
-TEST(BencodeParserTest, testParseDictionaryInAnotherDictionary) {
-    const std::string topLevelFieldName = "topLevelDictionaryFieldName";
-    const std::string fieldName= "someFieldName";
-    const std::string fieldValue = "someFieldValue";
-
-    std::stringstream ss;
-    std::stringstream topLevelDictionaryValue;
-
-    topLevelDictionaryValue << fieldName << 'd' << fieldValue.size() << ':' << fieldValue << 'e';
-    ss << "d" << topLevelFieldName.size() <<  ':' << topLevelFieldName << 'd' << fieldName.size() << ':' << topLevelDictionaryValue.str() << 'e';
-
-    const std::string bencodeString = ss.str();
-
-    BencodeParser parser(bencodeString);
-
-
-    std::string result;
-    ASSERT_NO_THROW(result = parser.getValue(topLevelFieldName));
-    ASSERT_EQ(result, topLevelDictionaryValue.str());
-}
-
-TEST(BencodeParserTest, testParseListOfDictionaries) {
-    const std::string topLevelFieldName = "info";
-    const std::string listFieldName = "files";
-    const std::string fieldName = "length";
-
-    std::stringstream firstListElement;
-    firstListElement << 'd' << fieldName.size() << ':' << fieldName << 'i' << 1 << 'e' << 'e';
-    std::stringstream secondListElement;
-    firstListElement << 'd' << fieldName.size() << ':' << fieldName << 'i' << 2 << 'e' << 'e';
-    std::stringstream ss;
-
-    ss << 'd' << topLevelFieldName.size() << ':' << topLevelFieldName << 'd' << listFieldName.size() << ':' << listFieldName << 'l' << 'd' << fieldName.size() << ':' << fieldName << 'i' << 1 << 'e' << 'e' << 'd' << fieldName.size() << ':' << fieldName << 'i' << 2 << 'e' << 'e' << 'e';
-
-    const std::string bencodeString = ss.str();
-
-    BencodeParser parser(bencodeString);
-
-    StringVector result;
-    ASSERT_NO_THROW(result = parser.getList(listFieldName));
-    ASSERT_TRUE(result.size() == 2);
-}
-
 TEST(BencodeParserTest, testParseList) {
     const std::string fieldName = "prettyList";
     const std::string fieldValue = "IAmListElement";
@@ -265,4 +222,92 @@ TEST(BencodeParserTest, testParseIntValue) {
 
     ASSERT_NO_THROW(result = parser.getValue(fieldName));
     ASSERT_EQ(result, std::to_string(id));
+}
+
+TEST(BencodeParserTest, testParseDictionaryInAnotherDictionary) {
+    const std::string topLevelFieldName = "topLevelDictionaryFieldName";
+    const std::string fieldName= "someFieldName";
+    const std::string fieldValue = "someFieldValue";
+
+    std::stringstream ss;
+    std::stringstream topLevelDictionaryValue;
+
+    topLevelDictionaryValue << fieldName << fieldValue.size() << ':' << fieldValue << 'e';
+    ss << "d" << topLevelFieldName.size() <<  ':' << topLevelFieldName << 'd' << fieldName.size() << ':' << topLevelDictionaryValue.str() << 'e';
+
+    const std::string bencodeString = ss.str();
+
+    BencodeParser parser(bencodeString);
+
+    std::stringstream expected;
+    expected << 'd' << fieldName.size() << ':' << fieldName << fieldValue.size() << ':' << fieldValue << 'e';
+    const std::string expectedResult = expected.str();
+
+    std::string result;
+    ASSERT_NO_THROW(result = parser.getValue(topLevelFieldName));
+    ASSERT_EQ(result, expectedResult);
+}
+
+TEST(BencodeParserTest, testParseListOfDictionariesWithSingleField) {
+    const std::string topLevelFieldName = "info";
+    const std::string listFieldName = "files";
+    const std::string fieldName = "length";
+    const int dictionariesAmount = 5;
+
+    std::stringstream ss;
+    ss << 'd' << topLevelFieldName.size() << ':' << topLevelFieldName << 'd' << listFieldName.size() << ':' << listFieldName << 'l';
+    for(int i = 1; i <= dictionariesAmount; ++i) {
+        std::stringstream listElement;
+        listElement << 'd' << fieldName.size() << ':' << fieldName << 'i' << i << 'e' << 'e';
+        ss << listElement.str();
+    }
+    ss << 'e';
+    const std::string bencodeString = ss.str();
+    BencodeParser parser(bencodeString);
+    StringVector result;
+
+    ASSERT_NO_THROW(result = parser.getList(listFieldName));
+    ASSERT_EQ(result.size(), dictionariesAmount);
+
+    for(int i = 1; i <= dictionariesAmount; ++i) {
+        std::stringstream listElement;
+        listElement << 'd' << fieldName.size() << ':' << fieldName << 'i' << i << 'e' << 'e';
+        ASSERT_EQ(result[i-1], listElement.str());
+    }
+}
+
+TEST(BencodeParserTest, testParseListOfDictionariesWithMultipleFields) {
+    const std::string topLevelFieldName = "info";
+    const std::string listFieldName = "files";
+    const std::string firstFieldName = "length";
+    const std::string secondFieldName = "path";
+    const std::string secondFieldValue = "/path/to/file";
+    const int dictionariesAmount = 5;
+
+    std::stringstream ss;
+    ss << 'd' << topLevelFieldName.size() << ':' << topLevelFieldName << 'd' << listFieldName.size() << ':' << listFieldName << 'l';
+    for(int i = 1; i <= dictionariesAmount; ++i) {
+        std::stringstream listElement;
+        std::stringstream firstField;
+        std::stringstream secondField;
+        firstField << firstFieldName.size() << ':' << firstFieldName << 'i' << i << 'e' ;
+        secondField << secondFieldName.size() << ':' << secondFieldName << secondFieldValue.size() + 1 << ':' << secondFieldValue << i;
+        listElement << 'd' <<  firstField.str() << secondField.str() << 'e';
+        ss << listElement.str();
+    }
+    ss << 'e';
+    const std::string bencodeString = ss.str();
+    BencodeParser parser(bencodeString);
+    StringVector result;
+
+    ASSERT_NO_THROW(result = parser.getList(listFieldName));
+    ASSERT_TRUE(result.size() == dictionariesAmount);
+
+    for(int i = 1; i <= dictionariesAmount; ++i) {
+        std::stringstream firstField;
+        std::stringstream secondField;
+        firstField << 'd' << firstFieldName.size() << ':' << firstFieldName << 'i' << i << 'e' ;
+        secondField << secondFieldName.size()  << ':' << secondFieldName << secondFieldValue.size() + 1 << ':' << secondFieldValue << i << 'e';
+        ASSERT_EQ(result[i-1], firstField.str() + secondField.str());
+    }
 }
