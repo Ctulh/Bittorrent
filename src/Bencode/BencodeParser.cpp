@@ -9,6 +9,7 @@
 #include <stack>
 #include <numeric>
 #include <algorithm>
+#include <stdint.h>
 
 /**
  * BencodeParser constructor
@@ -33,9 +34,6 @@ std::string BencodeParser::operator[](const std::string &fieldName) {
         throw NoSuchFieldException(fieldName);
     }
     it += fieldName.size();
-
-    const std::size_t dataSize = m_data.size();
-
     std::string fieldValue;
 
     if(m_data[it] == 'i') { // 'i' means integer value
@@ -146,11 +144,10 @@ std::string BencodeParser::readString(std::size_t& index) const {
     if(m_data[index] == ':')
         ++index;
 
-    int numberOfBytesInFieldValue = 0;
-    auto curr = m_data[index];
+    std::size_t numberOfBytesInFieldValue = 0;
     while (index < dataSize && isdigit(m_data[index])) {
         numberOfBytesInFieldValue *= 10;
-        numberOfBytesInFieldValue += m_data[index] - '0';
+        numberOfBytesInFieldValue += static_cast<uint32_t>(m_data[index] - '0');
         ++index;
     }
     std::size_t begin = index+1;
@@ -165,15 +162,15 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
     const std::size_t dataSize = m_data.size();
     int carry = 1;
 
-    int begin = index;
+    std::size_t begin = index;
     if(index < dataSize && m_data[index] == 'd')
         ++index;
 
     while(carry != 0 && index < dataSize) {
-        int dataLengthInBytes = 0;
+        std::size_t dataLengthInBytes = 0;
         while(index < dataSize && std::isdigit(m_data[index])) {
              dataLengthInBytes *= 10;
-             dataLengthInBytes += m_data[index] - '0';
+             dataLengthInBytes += static_cast<uint32_t>(m_data[index] - '0');
              ++index;
         }
         ++index;
@@ -197,7 +194,7 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
 
        }
     }
-    if (begin == -1)
+    if (begin == std::string::npos)
         return "";
     std::string res = m_data.substr(begin, index - begin);
     return res;

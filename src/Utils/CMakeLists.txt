@@ -1,10 +1,14 @@
 set(LIB_NAME Utils)
 
+set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(HEADERS_PATH ${PROJECT_SOURCE_DIR}/include/Utils)
 
-set(HEADERS ${HEADERS_PATH}/StringMethods.hpp)
-set(SOURCES StringMethods.cpp)
+set(HEADERS ${HEADERS_PATH}/StringMethods.hpp
+            ${HEADERS_PATH}/HashMethods.hpp)
+
+set(SOURCES StringMethods.cpp
+            HashMethods.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
-target_include_directories(${LIB_NAME} PUBLIC ${HEADERS_PATH})
+target_include_directories(${LIB_NAME} PUBLIC ${HEADERS_PATH} ${INCLUDE_DIR})

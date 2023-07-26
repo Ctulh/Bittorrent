@@ -6,18 +6,21 @@
 
 #include <string>
 #include <array>
-#include <vector>
+#include <memory>
+
+#include "Bencode/BencodeParser.hpp"
 
 using TorrentHash = std::array<std::byte, 20>;
 
 class TorrentFile {
 public:
+    explicit TorrentFile(std::string const& path);
+
+public:
+    std::string getAnnounce();
+    std::string getTotalBytesLeft();
+    TorrentHash getInfoHash();
+
 private:
-    std::string m_announce;
-    std::string m_name;
-    std::string m_pieces;
-    TorrentHash m_infoHash;
-    std::vector<TorrentHash> pieceHashes;
-    int m_pieceLength;
-    int m_length;
+    std::unique_ptr<BencodeParser> m_parser;
 };

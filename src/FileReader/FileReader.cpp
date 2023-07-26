@@ -15,7 +15,7 @@
 FileReader::FileReader(std::string const& path): m_path(path) {
     StringVector pathComponents;
     pathComponents = StringMethods::split(path, std::filesystem::path::preferred_separator);
-    const int componentsAmount = pathComponents.size();
+    const std::size_t componentsAmount = pathComponents.size();
     const std::regex windowsGlobalPathRegex (R"([a-zA-z])");
 
     std::string currPath;

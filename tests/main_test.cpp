@@ -8,6 +8,7 @@
 #include "StringOperationsTest.hpp"
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
+#include "BittorrentTests/TorrentFileTests.hpp"
 
 int main(int argc, char** argv) {
     using testing::InitGoogleTest;
