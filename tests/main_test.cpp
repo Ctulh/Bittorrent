@@ -5,7 +5,8 @@
 #include <gtest/gtest.h>
 
 #include "BencodeParsingTests.hpp"
-#include "StringOperationsTest.hpp"
+#include "UtilsTests/StringOperationsTest.hpp"
+#include "UtilsTests/HashMethodsTest.hpp"
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
 #include "BittorrentTests/TorrentFileTests.hpp"

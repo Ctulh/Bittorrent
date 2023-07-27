@@ -38,7 +38,7 @@ Sha1Hash hash::sha1(std::string const& strToHash) {
     return hashBytes;
 }
 
-std::string hash::urlEncodeSha1Hash(const hash::Sha1Hash &hash) {
+std::string hash::urlEncodeHash(const hash::Sha1Hash &hash) {
     std::string output;
     for(auto el: hash) {
         int elNumber = static_cast<int>(el);

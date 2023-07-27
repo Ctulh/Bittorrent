@@ -4,19 +4,13 @@
 
 #pragma once
 
-#include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
 
-namespace beast = boost::beast;
-namespace http = beast::http;
-namespace asio = boost::asio;
-using tcp = asio::ip::tcp;
+#include "Bittorrent/TorrentFile.hpp"
 
+using httpRequest = boost::beast::http::request<boost::beast::http::string_body>;
 
 class RequestBuilder {
 public:
-    static http::request<http::string_body> createRequest(http::verb httpMethod, std::string const& host, std::string const& target, std::unordered_map<std::string, std::string> const& values);
+    static httpRequest createTrackerRequest(TorrentFile& torrentFile, std::string const& port); //TODO const
 };

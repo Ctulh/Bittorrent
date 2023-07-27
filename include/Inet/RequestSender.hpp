@@ -19,5 +19,5 @@ using tcp = asio::ip::tcp;
 
 class RequestSender {
 public:
-    std::string sendRequest(beast::http::request<http::string_body> const& request, std::string const& host, const std::string &port = "6969");
+    static std::string sendRequest(beast::http::request<http::string_body> const& request, std::string const& host, const std::string &port = "80");
 };

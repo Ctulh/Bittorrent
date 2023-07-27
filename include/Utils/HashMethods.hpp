@@ -12,6 +12,6 @@ namespace hash {
 
     Sha1Hash stringHashToBytes(std::string const& hash);
     Sha1Hash sha1(std::string const& str);
-    std::string urlEncodeSha1Hash(Sha1Hash const& hash);
+    std::string urlEncodeHash(Sha1Hash const& hash);
 
 }

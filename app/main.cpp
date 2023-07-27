@@ -4,14 +4,15 @@
 #include "BencodeParser.hpp"
 #include "RequestSender.hpp"
 #include "RequestBuilder.hpp"
-
+#include "Bittorrent/TorrentFile.hpp"
+#include <algorithm>
 
 int main() {
-    FileReader fileReader("/home/ctuh/Downloads/test.torrent");
-    BencodeParser parser(fileReader.getData());
+    TorrentFile torrentFile("/home/ctuh/Downloads/test.torrent");
 
-    auto res  = parser.getList("files");
-    for(auto el: res)
-        std::cout << el << std::endl << std::endl;
+    std::string host = "bt3.t-ru.org";
+    auto request = RequestBuilder::createTrackerRequest(torrentFile, host);
 
+
+    std::cout << RequestSender::sendRequest(request, host, "80");
 }
