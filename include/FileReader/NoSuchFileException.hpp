@@ -7,6 +7,10 @@
 #include <exception>
 #include <string>
 
+/**
+ * @brief An exception that indicates the absence of a file.
+ */
+
 class NoSuchFileException: public std::exception {
 public:
     NoSuchFileException(std::string const& path);

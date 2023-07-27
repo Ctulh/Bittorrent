@@ -1,11 +1,12 @@
-//
-// Created by ctuh on 7/20/23.
-//
 
 #pragma once
 
 #include <exception>
 #include <string>
+
+/**
+ * @brief An exception that means the absence of a field in a bencode string. Can be thrown from BencodeParser.
+ */
 
 class NoSuchFieldException: public std::exception {
 public:

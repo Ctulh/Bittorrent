@@ -12,6 +12,11 @@
 #include <iterator>
 #include <regex>
 
+/**
+ * @param path Path to file.
+ * @throw WrongPathException If there is a non-existent directory in the filepath.
+ * @throw NoSuchFileException If the file does not exist.
+ */
 FileReader::FileReader(std::string const& path): m_path(path) {
     StringVector pathComponents;
     pathComponents = StringMethods::split(path, std::filesystem::path::preferred_separator);
@@ -42,6 +47,9 @@ FileReader::FileReader(std::string const& path): m_path(path) {
     }
 }
 
+/**
+ * @return Whole file data.
+ */
 std::string FileReader::getData() const {
     std::ifstream file(m_path);
     std::string result((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

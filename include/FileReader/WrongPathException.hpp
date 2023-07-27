@@ -7,6 +7,10 @@
 #include <exception>
 #include <string>
 
+/**
+ * @brief An exception that indicates an error in the file path.
+ */
+
 class WrongPathException: std::exception {
 public:
     WrongPathException(std::string const& path);

@@ -1,7 +1,3 @@
-//
-// Created by ctuh on 7/20/23.
-//
-
 #pragma once
 
 #include <string>
@@ -30,6 +26,6 @@ private:
 
 private:
     std::unordered_map<std::string, OptionalString> m_fieldValues;
-    std::string m_data;
+    std::string m_bencodeData;
     const char m_listSeparator = ',';
 };

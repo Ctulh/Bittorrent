@@ -12,5 +12,5 @@ using httpRequest = boost::beast::http::request<boost::beast::http::string_body>
 
 class RequestBuilder {
 public:
-    static httpRequest createTrackerRequest(TorrentFile& torrentFile, std::string const& port); //TODO const
+    static httpRequest buildTrackerRequest(TorrentFile& torrentFile, std::string const& port); //TODO const
 };

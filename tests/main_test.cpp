@@ -7,6 +7,7 @@
 #include "BencodeParsingTests.hpp"
 #include "UtilsTests/StringOperationsTest.hpp"
 #include "UtilsTests/HashMethodsTest.hpp"
+#include "UtilsTests/UrlMethodsTest.hpp"
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
 #include "BittorrentTests/TorrentFileTests.hpp"

@@ -4,8 +4,10 @@ set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 set(HEADERS_PATH ${PROJECT_SOURCE_DIR}/include/Bittorrent)
 
-set(HEADERS ${HEADERS_PATH}/TorrentFile.hpp)
-set(SOURCES TorrentFile.cpp)
+set(HEADERS ${HEADERS_PATH}/TorrentFile.hpp
+            ${HEADERS_PATH}/Peer.hpp)
+set(SOURCES TorrentFile.cpp
+            Peer.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

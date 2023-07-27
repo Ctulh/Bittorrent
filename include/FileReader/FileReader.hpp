@@ -1,11 +1,10 @@
-//
-// Created by ctuh on 7/21/23.
-//
-
 #pragma once
 
 #include <string>
 
+/**
+ * @brief Class that provides access to file data.
+ */
 class FileReader {
 public:
     FileReader(std::string const& path);

@@ -15,7 +15,7 @@ namespace http = beast::http;
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 
-httpRequest RequestBuilder::createTrackerRequest(TorrentFile &torrentFile, std::string const& host) {
+httpRequest RequestBuilder::buildTrackerRequest(TorrentFile &torrentFile, std::string const& host) {
     const int httpVersion = 11;
 
     std::stringstream ss;
@@ -24,8 +24,8 @@ httpRequest RequestBuilder::createTrackerRequest(TorrentFile &torrentFile, std::
     //TODO exception if no backslash
     ss << torrentAnnounce.substr(it.base() - torrentAnnounce.begin()-1);
     ss << "&" << "info_hash=" << hash::urlEncodeHash(torrentFile.getInfoHash()) << "&"
-       //<< "peer_id=" << hash::urlEncodeHash(hash::sha1("ABCDEFGHIJKLMNOPQRST")) << "&"
-       << "peer_id=%EBk%A5%8D%97nz%0E%C2%F0X%FF%DD%B0%C7%99%D0%FE%81g" << "&"
+       << "peer_id=" << hash::urlEncodeHash(hash::sha1("ABCDEFGHIJKLMNOPQRST")) << "&"
+       //<< "peer_id=%EBk%A5%8D%97nz%0E%C2%F0X%FF%DD%B0%C7%99%D0%FE%81g" << "&"
        << "uploaded=" << "0" << "&"
        << "downloaded=" << "0" << "&"
        << "port=" << "6881" << "&"

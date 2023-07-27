@@ -1,7 +1,3 @@
-//
-// Created by ctuh on 7/21/23.
-//
-
 #pragma once
 
 #include <string>
@@ -11,6 +7,10 @@
 #include "Bencode/BencodeParser.hpp"
 
 using TorrentHash = std::array<std::byte, 20>;
+
+/**
+ * @brief Class that represents file with torrent extension.
+ */
 
 class TorrentFile {
 public:
@@ -23,4 +23,5 @@ public:
 
 private:
     std::unique_ptr<BencodeParser> m_parser;
+    std::string m_filepath;
 };
