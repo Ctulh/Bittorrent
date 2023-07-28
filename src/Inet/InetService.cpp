@@ -43,3 +43,7 @@ bool InetService::connect(tcp::socket &socket, const std::string &host, const st
     }
     return true;
 }
+
+boost::asio::io_context& InetService::getContext() {
+    return m_context;
+}

@@ -22,6 +22,7 @@ private:
 public:
     static InetService& getInstance();
     std::string sendHttpRequest(beast::http::request<http::string_body> const& request, std::string const& host, const std::string &port = "80");
+    boost::asio::io_context& getContext();
 
 private:
     bool connect(tcp::socket& socket, std::string const& host, std::string const& port);
