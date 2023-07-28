@@ -143,3 +143,59 @@ TEST(UrlMethodsTest, TestGetPathWithAllUrlParts) {
     ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
     ASSERT_EQ(result, path);
 }
+
+TEST(UrlMethodsTest, TestGetParametersOnEmptyString) {
+    const std::string url = "";
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    ASSERT_TRUE(result.empty());
+}
+
+TEST(UrlMethodsTest, TestGetParametersOnOnlyDomain) {
+    const std::string domainName = "www.test.com";
+    const std::string url = domainName;
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    ASSERT_TRUE(result.empty());
+}
+
+TEST(UrlMethodsTest, TestGetParametersOnUrlWithDomainName) {
+    const std::string domainName = "www.test.com";
+    const std::string path = "/file";
+    const std::string parameters = "?key1=1&key2=2";
+    const std::string url = domainName + path + parameters;
+
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    ASSERT_EQ(result, parameters);
+}
+
+TEST(UrlMethodsTest, TestGetParametersOnUrlWithPort) {
+    const std::string domainName = "www.test.com";
+    const std::string path = "/file";
+    const std::string port = ":80";
+    const std::string parameters = "?key1=1&key2=2";
+    const std::string url = domainName + port + path + parameters;
+
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    ASSERT_EQ(result, parameters);
+}
+
+TEST(UrlMethodsTest, TestGetParamteresWithAllUrlParts) {
+    const std::string scheme = "http://";
+    const std::string domainName = "www.test.com";
+    const std::string port = ":80";
+    const std::string path = "/path/to/file.html";
+    const std::string parameters = "?key1=1&key2=2";
+    const std::string anchor = "#Somewhere";
+    const std::string url = scheme + domainName + port + path + parameters + anchor;
+
+    std::string result;
+    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    ASSERT_EQ(result, parameters);
+}

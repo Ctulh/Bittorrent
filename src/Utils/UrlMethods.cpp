@@ -19,11 +19,20 @@ std::string UrlMethods::getDomainName(std::string const& url) {
     return url.substr(index);
 }
 
-std::string UrlMethods::getParameters(const std::string &url) {
-    return "";
+std::string UrlMethods::getParameters(std::string const& url) {
+    std::size_t index = url.find('?');
+    if(index == url.npos)
+        return "";
+
+    const std::size_t strSize = url.size();
+    for(std::size_t i = index; i < strSize; ++i) {
+        if(url[i] == '#')
+            return url.substr(index, i - index);
+    }
+    return url.substr(index);
 }
 
-std::string UrlMethods::getPathToFile(const std::string &url) {
+std::string UrlMethods::getPathToFile(std::string const& url) {
     const std::string httpScheme = "http://";
     std::size_t index = 0;
     if(url.starts_with(httpScheme)) {
@@ -43,3 +52,17 @@ std::string UrlMethods::getPathToFile(const std::string &url) {
 
     return url.substr(index);
 }
+
+std::string UrlMethods::getDataAfterDomainName(std::string const& url) {
+    const std::string httpScheme = "http://";
+    std::size_t index = 0;
+    if(url.starts_with(httpScheme)) {
+        index += httpScheme.size();
+    }
+    auto slash = url.find('/', index);
+    if(slash == url.npos)
+        return "";
+
+    index = slash;
+    return url.substr(index);
+};

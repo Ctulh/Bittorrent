@@ -10,4 +10,5 @@ namespace UrlMethods {
     std::string getDomainName(std::string const& url);
     std::string getPathToFile(std::string const& url);
     std::string getParameters(std::string const& url);
+    std::string getDataAfterDomainName(std::string const& url);
 }
