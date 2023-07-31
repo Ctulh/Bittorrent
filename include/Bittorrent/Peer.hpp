@@ -8,12 +8,13 @@
 
 class Peer {
 public:
-    Peer(std::string const& address, std::string const& port);
+    Peer(std::string const& address, unsigned short port);
 
 public:
-    friend std::ostream& operator<<(std::ostream& os, Peer const& peer);
+    std::string getAddress() const;
+    unsigned short getPort() const;
 
 private:
     std::string m_address;
-    std::string m_port;
+    unsigned short m_port;
 };

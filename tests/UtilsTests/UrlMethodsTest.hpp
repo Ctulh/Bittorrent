@@ -199,3 +199,37 @@ TEST(UrlMethodsTest, TestGetParamteresWithAllUrlParts) {
     ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
     ASSERT_EQ(result, parameters);
 }
+
+TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPath) {
+    const std::string domainName = "www.test.com";
+    const std::string path = "/path/to/file.html";
+    const std::string url = domainName + path;
+
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    ASSERT_EQ(result, path);
+}
+
+TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPortAndPath) {
+    const std::string domainName = "www.test.com";
+    const std::string path = "/path/to/file.html";
+    const std::string port = ":80";
+    const std::string url = domainName + port + path;
+
+    std::string result;
+    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    ASSERT_EQ(result, path);
+}
+
+TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPathAndParameters) {
+    const std::string domainName = "www.test.com";
+    const std::string path = "/path/to/file.html";
+    const std::string parameters = "?key1=1&key2=2";
+    const std::string url = domainName + path + parameters;
+
+    std::string result;
+
+    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    ASSERT_EQ(result, path + parameters);
+}
