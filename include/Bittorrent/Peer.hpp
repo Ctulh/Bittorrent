@@ -1,20 +1,23 @@
 //
-// Created by ctuh on 7/27/23.
+// Created by ctuh on 8/1/23.
 //
 
 #pragma once
 
-#include <string>
+#include "PeerInfo.hpp"
+#include "Socket.hpp"
+#include "StreamSocket.hpp"
+
+#include <boost/asio.hpp>
+#include <memory>
 
 class Peer {
 public:
-    Peer(std::string const& address, unsigned short port);
-
+    Peer(PeerInfo const& peerInfo);
 public:
-    std::string getAddress() const;
-    unsigned short getPort() const;
+    bool handshake(std::string const& request);
 
 private:
-    std::string m_address;
-    unsigned short m_port;
+    PeerInfo m_peerInfo;
+    StreamSocket m_streamSocket;
 };

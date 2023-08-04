@@ -8,7 +8,7 @@
 #include <string>
 
 #include "Bencode/CanBeBuiltFromBencodeData.hpp"
-#include "Peer.hpp"
+#include "PeerInfo.hpp"
 #include "Logger/Logger.hpp"
 #include <boost/lexical_cast.hpp>
 
@@ -27,9 +27,9 @@ public:
         m_peers = m_bencodeValues["peers"];
     }
 
-    std::vector<Peer> getPeers() {
+    std::vector<PeerInfo> getPeers() {
         const std::size_t peersSize = m_peers.size();
-        std::vector<Peer> peers;
+        std::vector<PeerInfo> peers;
         for (std::size_t i = 0; i < m_peers.size(); i += 6) {
             std::stringstream address;
             std::stringstream port;

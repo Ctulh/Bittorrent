@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include "Peer.hpp"
+#include "PeerInfo.hpp"
 
 class Torrent {
 public:
