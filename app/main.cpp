@@ -23,7 +23,7 @@
 
 std::size_t connectedPeers = 0;
 std::size_t totalPeers = 0;
-
+#include "Bittorrent/BittorrentMessageBuilder.hpp"
 
 
 class PeerWriter {
@@ -127,7 +127,17 @@ int main() {
     }
 
     for(auto& peer: peers) {
-        peer->handshake(reqStr);
+        if(peer->handshake(reqStr)) {
+            auto socket = peer->getSocket();
+            BittorrentMessageBuilder builder;
+            builder.setMessageType(MessageType::INTERESTED);
+            socket.setSendTimeout(std::chrono::milliseconds(10000));
+            socket.setReceiveTimeout(std::chrono::milliseconds(10000));
+            socket.send(builder.getMessage());
+            std::string response;
+            socket.receive(response);
+            Logger::logInfo(response);
+        }
     }
 
 
