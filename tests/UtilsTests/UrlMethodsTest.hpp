@@ -10,7 +10,7 @@
 
 TEST(UrlMethodsTest, TestUrlGetDomainWithEmptyString) {
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(""));
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(""));
     ASSERT_TRUE(result.empty());
 }
 
@@ -19,8 +19,8 @@ TEST(UrlMethodsTest, TestUrlGetDomainWithOnlyDomainName) {
     const std::string url = domainName;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(url));
-    ASSERT_EQ(result, domainName);
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(url));
+    EXPECT_EQ(result, domainName);
 }
 
 TEST(UrlMethodsTest, TestUrlGetDomainWithSchemeAndDomainName) {
@@ -29,8 +29,8 @@ TEST(UrlMethodsTest, TestUrlGetDomainWithSchemeAndDomainName) {
     const std::string url = scheme + domainName;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(url));
-    ASSERT_EQ(result, domainName);
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(url));
+    EXPECT_EQ(result, domainName);
 }
 
 TEST(UrlMethodsTest, TestUrlGetDomainWithDomainNameAndPort) {
@@ -39,8 +39,8 @@ TEST(UrlMethodsTest, TestUrlGetDomainWithDomainNameAndPort) {
     const std::string url = domainName + port;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(url));
-    ASSERT_EQ(result, domainName);
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(url));
+    EXPECT_EQ(result, domainName);
 }
 
 TEST(UrlMethodsTest, TestUrlGetDomainWithDomainNameAndPathToTheFile) {
@@ -49,8 +49,8 @@ TEST(UrlMethodsTest, TestUrlGetDomainWithDomainNameAndPathToTheFile) {
     const std::string url = domainName + path;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(url));
-    ASSERT_EQ(result, domainName);
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(url));
+    EXPECT_EQ(result, domainName);
 }
 
 TEST(UrlMethodsTest, TestUrlGetDomainWithAllUrlParts) {
@@ -63,8 +63,8 @@ TEST(UrlMethodsTest, TestUrlGetDomainWithAllUrlParts) {
     const std::string url = scheme + domainName + port + path + parameters + anchor;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDomainName(url));
-    ASSERT_EQ(result, domainName);
+    EXPECT_NO_THROW(result = UrlMethods::getDomainName(url));
+    EXPECT_EQ(result, domainName);
 }
 
 TEST(UrlMethodsTest, TestGetEmptyPath) {
@@ -73,7 +73,7 @@ TEST(UrlMethodsTest, TestGetEmptyPath) {
     const std::string url = domainName + path;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
     ASSERT_TRUE(result.empty());
 }
 
@@ -83,8 +83,8 @@ TEST(UrlMethodsTest, TestGetPathWithFile) {
     const std::string url = domainName + path;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
-    ASSERT_EQ(path, result);
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_EQ(path, result);
 }
 
 TEST(UrlMethodsTest, TestGetPathWithManyDirectories) {
@@ -102,8 +102,8 @@ TEST(UrlMethodsTest, TestGetPathWithManyDirectories) {
     const std::string url = domainName + fullPath;
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
-    ASSERT_EQ(result, fullPath);
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_EQ(result, fullPath);
 }
 
 TEST(UrlMethodsTest, TestGetPathWithPort) {
@@ -114,8 +114,8 @@ TEST(UrlMethodsTest, TestGetPathWithPort) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
-    ASSERT_EQ(result, path);
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_EQ(result, path);
 }
 
 TEST(UrlMethodsTest, TestGetPathParameters) {
@@ -126,8 +126,8 @@ TEST(UrlMethodsTest, TestGetPathParameters) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
-    ASSERT_EQ(result, path);
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_EQ(result, path);
 }
 
 TEST(UrlMethodsTest, TestGetPathWithAllUrlParts) {
@@ -140,15 +140,15 @@ TEST(UrlMethodsTest, TestGetPathWithAllUrlParts) {
     const std::string url = scheme + domainName + port + path + parameters + anchor;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getPathToFile(url));
-    ASSERT_EQ(result, path);
+    EXPECT_NO_THROW(result = UrlMethods::getPathToFile(url));
+    EXPECT_EQ(result, path);
 }
 
 TEST(UrlMethodsTest, TestGetParametersOnEmptyString) {
     const std::string url = "";
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    EXPECT_NO_THROW(result = UrlMethods::getParameters(url));
     ASSERT_TRUE(result.empty());
 }
 
@@ -157,7 +157,7 @@ TEST(UrlMethodsTest, TestGetParametersOnOnlyDomain) {
     const std::string url = domainName;
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
+    EXPECT_NO_THROW(result = UrlMethods::getParameters(url));
     ASSERT_TRUE(result.empty());
 }
 
@@ -169,8 +169,8 @@ TEST(UrlMethodsTest, TestGetParametersOnUrlWithDomainName) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
-    ASSERT_EQ(result, parameters);
+    EXPECT_NO_THROW(result = UrlMethods::getParameters(url));
+    EXPECT_EQ(result, parameters);
 }
 
 TEST(UrlMethodsTest, TestGetParametersOnUrlWithPort) {
@@ -182,8 +182,8 @@ TEST(UrlMethodsTest, TestGetParametersOnUrlWithPort) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
-    ASSERT_EQ(result, parameters);
+    EXPECT_NO_THROW(result = UrlMethods::getParameters(url));
+    EXPECT_EQ(result, parameters);
 }
 
 TEST(UrlMethodsTest, TestGetParamteresWithAllUrlParts) {
@@ -196,8 +196,8 @@ TEST(UrlMethodsTest, TestGetParamteresWithAllUrlParts) {
     const std::string url = scheme + domainName + port + path + parameters + anchor;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getParameters(url));
-    ASSERT_EQ(result, parameters);
+    EXPECT_NO_THROW(result = UrlMethods::getParameters(url));
+    EXPECT_EQ(result, parameters);
 }
 
 TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPath) {
@@ -207,8 +207,8 @@ TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPath) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
-    ASSERT_EQ(result, path);
+    EXPECT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    EXPECT_EQ(result, path);
 }
 
 TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPortAndPath) {
@@ -218,8 +218,8 @@ TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPortAndPath) {
     const std::string url = domainName + port + path;
 
     std::string result;
-    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
-    ASSERT_EQ(result, path);
+    EXPECT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    EXPECT_EQ(result, path);
 }
 
 TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPathAndParameters) {
@@ -230,6 +230,6 @@ TEST(UrlMethodsTest, TestGetDataAfterDomainNameWithPathAndParameters) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
-    ASSERT_EQ(result, path + parameters);
+    EXPECT_NO_THROW(result = UrlMethods::getDataAfterDomainName(url));
+    EXPECT_EQ(result, path + parameters);
 }

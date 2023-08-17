@@ -22,8 +22,8 @@ TEST(BencodeParserTest, testParseSimpleBencodeString) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = parser["announce"]);
-    ASSERT_EQ(result, fieldValue);
+    EXPECT_NO_THROW(result = parser["announce"]);
+    EXPECT_EQ(result, fieldValue);
 }
 
 TEST(BencodeParserTest, testParseSimpleBencodeStringTwice) {
@@ -38,10 +38,10 @@ TEST(BencodeParserTest, testParseSimpleBencodeStringTwice) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = parser["announce"]);
-    ASSERT_EQ(result, fieldValue);
-    ASSERT_NO_THROW(result = parser["announce"]);
-    ASSERT_EQ(result, fieldValue);
+    EXPECT_NO_THROW(result = parser["announce"]);
+    EXPECT_EQ(result, fieldValue);
+    EXPECT_NO_THROW(result = parser["announce"]);
+    EXPECT_EQ(result, fieldValue);
 }
 
 TEST(BencodeParserTest, testParseList) {
@@ -65,11 +65,11 @@ TEST(BencodeParserTest, testParseList) {
 
     StringVector result;
 
-    ASSERT_NO_THROW(result = parser.getList(fieldName));
+    EXPECT_NO_THROW(result = parser.getList(fieldName));
     ASSERT_TRUE(result.size() == listSize);
 
     for(int i = 1; i <= listSize; ++i) {
-        ASSERT_EQ(result[i-1], fieldValue + std::to_string(i));
+        EXPECT_EQ(result[i-1], fieldValue + std::to_string(i));
     }
 }
 
@@ -94,18 +94,18 @@ TEST(BencodeParserTest, testParseListTwice) {
 
     StringVector result;
 
-    ASSERT_NO_THROW(result = parser.getList(fieldName));
+    EXPECT_NO_THROW(result = parser.getList(fieldName));
     ASSERT_TRUE(result.size() == listSize);
 
     for(int i = 1; i <= listSize; ++i) {
-        ASSERT_EQ(result[i-1], fieldValue + std::to_string(i));
+        EXPECT_EQ(result[i-1], fieldValue + std::to_string(i));
     }
 
-    ASSERT_NO_THROW(result = parser.getList(fieldName));
+    EXPECT_NO_THROW(result = parser.getList(fieldName));
     ASSERT_TRUE(result.size() == listSize);
 
     for(int i = 1; i <= listSize; ++i) {
-        ASSERT_EQ(result[i-1], fieldValue + std::to_string(i));
+        EXPECT_EQ(result[i-1], fieldValue + std::to_string(i));
     }
 }
 
@@ -122,9 +122,9 @@ TEST(BencodeParserTest, testParseDictionaryAsList) {
 
     StringVector result;
 
-    ASSERT_NO_THROW(result = parser.getList(fieldName));
+    EXPECT_NO_THROW(result = parser.getList(fieldName));
     ASSERT_TRUE(result.size() == 1);
-    ASSERT_EQ(result[0], fieldValue);
+    EXPECT_EQ(result[0], fieldValue);
 }
 
 TEST(BencodeParserTest, testGetUnexistFieldValue) {
@@ -220,8 +220,8 @@ TEST(BencodeParserTest, testParseIntValue) {
 
     std::string result;
 
-    ASSERT_NO_THROW(result = parser.getValue(fieldName));
-    ASSERT_EQ(result, std::to_string(id));
+    EXPECT_NO_THROW(result = parser.getValue(fieldName));
+    EXPECT_EQ(result, std::to_string(id));
 }
 
 TEST(BencodeParserTest, testParseDictionaryInAnotherDictionary) {
@@ -244,8 +244,8 @@ TEST(BencodeParserTest, testParseDictionaryInAnotherDictionary) {
     const std::string expectedResult = expected.str();
 
     std::string result;
-    ASSERT_NO_THROW(result = parser.getValue(topLevelFieldName));
-    ASSERT_EQ(result, expectedResult);
+    EXPECT_NO_THROW(result = parser.getValue(topLevelFieldName));
+    EXPECT_EQ(result, expectedResult);
 }
 
 TEST(BencodeParserTest, testParseListOfDictionariesWithSingleField) {
@@ -266,13 +266,13 @@ TEST(BencodeParserTest, testParseListOfDictionariesWithSingleField) {
     BencodeParser parser(bencodeString);
     StringVector result;
 
-    ASSERT_NO_THROW(result = parser.getList(listFieldName));
-    ASSERT_EQ(result.size(), dictionariesAmount);
+    EXPECT_NO_THROW(result = parser.getList(listFieldName));
+    EXPECT_EQ(result.size(), dictionariesAmount);
 
     for(int i = 1; i <= dictionariesAmount; ++i) {
         std::stringstream listElement;
         listElement << 'd' << fieldName.size() << ':' << fieldName << 'i' << i << 'e' << 'e';
-        ASSERT_EQ(result[i-1], listElement.str());
+        EXPECT_EQ(result[i-1], listElement.str());
     }
 }
 
@@ -300,7 +300,7 @@ TEST(BencodeParserTest, testParseListOfDictionariesWithMultipleFields) {
     BencodeParser parser(bencodeString);
     StringVector result;
 
-    ASSERT_NO_THROW(result = parser.getList(listFieldName));
+    EXPECT_NO_THROW(result = parser.getList(listFieldName));
     ASSERT_TRUE(result.size() == dictionariesAmount);
 
     for(int i = 1; i <= dictionariesAmount; ++i) {
@@ -308,6 +308,6 @@ TEST(BencodeParserTest, testParseListOfDictionariesWithMultipleFields) {
         std::stringstream secondField;
         firstField << 'd' << firstFieldName.size() << ':' << firstFieldName << 'i' << i << 'e' ;
         secondField << secondFieldName.size()  << ':' << secondFieldName << secondFieldValue.size() + 1 << ':' << secondFieldValue << i << 'e';
-        ASSERT_EQ(result[i-1], firstField.str() + secondField.str());
+        EXPECT_EQ(result[i-1], firstField.str() + secondField.str());
     }
 }

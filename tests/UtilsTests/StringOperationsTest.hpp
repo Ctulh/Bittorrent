@@ -9,13 +9,13 @@ TEST(StringOperationsTest, test_split_operation_with_existing_delimiters) {
     char const delimiter = ' ';
 
     StringVector result;
-    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
+    EXPECT_NO_THROW(result = split(stringForSplit, delimiter));
 
-    ASSERT_EQ(result.size(), 3);
+    EXPECT_EQ(result.size(), 3);
 
-    ASSERT_EQ(result[0], "Text0");
-    ASSERT_EQ(result[1], "Text1");
-    ASSERT_EQ(result[2], "Text2");
+    EXPECT_EQ(result[0], "Text0");
+    EXPECT_EQ(result[1], "Text1");
+    EXPECT_EQ(result[2], "Text2");
 }
 
 TEST(StringOperationsTest, test_split_operation_with_existing_delimiters_in_a_row) {
@@ -23,13 +23,13 @@ TEST(StringOperationsTest, test_split_operation_with_existing_delimiters_in_a_ro
     char const delimiter = ' ';
 
     StringVector result;
-    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
+    EXPECT_NO_THROW(result = split(stringForSplit, delimiter));
 
-    ASSERT_EQ(result.size(), 3);
+    EXPECT_EQ(result.size(), 3);
 
-    ASSERT_EQ(result[0], "Text0");
-    ASSERT_EQ(result[1], "Text1");
-    ASSERT_EQ(result[2], "Text2");
+    EXPECT_EQ(result[0], "Text0");
+    EXPECT_EQ(result[1], "Text1");
+    EXPECT_EQ(result[2], "Text2");
 }
 
 
@@ -38,11 +38,11 @@ TEST(StringOperationsTest, test_split_operation_without_existing_delimiters) {
     char const delimiter = ',';
 
     StringVector result;
-    ASSERT_NO_THROW(result = split(stringForSplit, delimiter));
+    EXPECT_NO_THROW(result = split(stringForSplit, delimiter));
 
-    ASSERT_EQ(result.size(), 1);
+    EXPECT_EQ(result.size(), 1);
 
-    ASSERT_EQ(result[0], stringForSplit);
+    EXPECT_EQ(result[0], stringForSplit);
 }
 
 TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end) {
@@ -50,9 +50,9 @@ TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end) {
     std::string const stringForStrip = " " + text + " ";
 
     std::string result;
-    ASSERT_NO_THROW(result = strip(stringForStrip));
+    EXPECT_NO_THROW(result = strip(stringForStrip));
 
-    ASSERT_EQ(result, text);
+    EXPECT_EQ(result, text);
 }
 
 TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end_with_more_than_one_space) {
@@ -60,9 +60,9 @@ TEST(StringOperationsTest, test_strip_with_spaces_at_begin_and_at_end_with_more_
     std::string const stringForStrip = "   " + text + "             ";
 
     std::string result;
-    ASSERT_NO_THROW(result = strip(stringForStrip));
+    EXPECT_NO_THROW(result = strip(stringForStrip));
 
-    ASSERT_EQ(result, text);
+    EXPECT_EQ(result, text);
 }
 
 TEST(StringOperationsTest, test_strip_with_spaces_only_at_begin) {
@@ -70,9 +70,9 @@ TEST(StringOperationsTest, test_strip_with_spaces_only_at_begin) {
     std::string const stringForStrip = "   " + text;
 
     std::string result;
-    ASSERT_NO_THROW(result = strip(stringForStrip));
+    EXPECT_NO_THROW(result = strip(stringForStrip));
 
-    ASSERT_EQ(result, text);
+    EXPECT_EQ(result, text);
 }
 
 TEST(StringOperationsTest, test_strip_with_spaces_only_at_end) {
@@ -80,9 +80,9 @@ TEST(StringOperationsTest, test_strip_with_spaces_only_at_end) {
     std::string const stringForStrip = text + "     ";
 
     std::string result;
-    ASSERT_NO_THROW(result = strip(stringForStrip));
+    EXPECT_NO_THROW(result = strip(stringForStrip));
 
-    ASSERT_EQ(result, text);
+    EXPECT_EQ(result, text);
 }
 
 TEST(StringOperationsTest, test_strip_without_spaces) {
@@ -90,7 +90,7 @@ TEST(StringOperationsTest, test_strip_without_spaces) {
     std::string const stringForStrip = text;
 
     std::string result;
-    ASSERT_NO_THROW(result = strip(stringForStrip));
+    EXPECT_NO_THROW(result = strip(stringForStrip));
 
-    ASSERT_EQ(result, text);
+    EXPECT_EQ(result, text);
 }

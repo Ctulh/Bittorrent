@@ -17,8 +17,8 @@ TEST(FileReaderTest, TestReadFile) {
     const std::string text = "text1337";
     std::string result;
 
-    ASSERT_NO_THROW(result = fileReader.getData());
-    ASSERT_EQ(result, text);
+    EXPECT_NO_THROW(result = fileReader.getData());
+    EXPECT_EQ(result, text);
 }
 
 TEST(FileReaderTest, TestReadUnexistFile) {

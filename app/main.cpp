@@ -23,7 +23,7 @@
 
 std::size_t connectedPeers = 0;
 std::size_t totalPeers = 0;
-#include "Bittorrent/BittorrentMessageBuilder.hpp"
+#include "Bittorrent/BittorrentMessages/BittorrentMessageBuilder.hpp"
 
 
 class PeerWriter {

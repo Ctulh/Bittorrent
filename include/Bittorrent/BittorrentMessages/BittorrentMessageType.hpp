@@ -16,4 +16,6 @@ enum class MessageType {
     REQUEST = 6,
     PIECE = 7,
     CANCEL = 8,
+    PORT = 9,
+    KEEP_ALIVE = 10,
 };

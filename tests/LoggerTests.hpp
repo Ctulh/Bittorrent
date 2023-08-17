@@ -52,63 +52,63 @@ TEST(LoggerTests, testMockLoggerInfoMethod) {
     std::string const messageForLog = "someMessage";
     LoggerMock loggerMock;
 
-    ASSERT_NO_THROW(loggerMock.logInfo(messageForLog));
-    ASSERT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "info");
+    EXPECT_NO_THROW(loggerMock.logInfo(messageForLog));
+    EXPECT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "info");
 }
 
 TEST(LoggerTests, testMockLoggerWarningMethod) {
     std::string const messageForLog = "someMessage";
     LoggerMock loggerMock;
 
-    ASSERT_NO_THROW(loggerMock.logWarning(messageForLog));
-    ASSERT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "warning");
+    EXPECT_NO_THROW(loggerMock.logWarning(messageForLog));
+    EXPECT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "warning");
 }
 
 TEST(LoggerTests, testMockLoggerErrorMethod) {
     std::string const messageForLog = "someMessage";
     LoggerMock loggerMock;
 
-    ASSERT_NO_THROW(loggerMock.logError(messageForLog));
-    ASSERT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "error");
+    EXPECT_NO_THROW(loggerMock.logError(messageForLog));
+    EXPECT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "error");
 }
 
 TEST(LoggerTests, testMockLoggerCriticalMethod) {
     std::string const messageForLog = "someMessage";
     LoggerMock loggerMock;
 
-    ASSERT_NO_THROW(loggerMock.logCritical(messageForLog));
-    ASSERT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "critical");
+    EXPECT_NO_THROW(loggerMock.logCritical(messageForLog));
+    EXPECT_EQ(loggerMock.getLastLoggedMessage(), messageForLog + "critical");
 }
 
 TEST_F(GlobalLoggerTest, testMockLoggerInfoMethodFromGlobalLogger) {
     std::string const messageForLog = "someMessage";
 
     ASSERT_TRUE(logger->getLastLoggedMessage().empty());
-    ASSERT_NO_THROW(Logger::logInfo(messageForLog));
-    ASSERT_EQ(logger->getLastLoggedMessage(), messageForLog + "info");
+    EXPECT_NO_THROW(Logger::logInfo(messageForLog));
+    EXPECT_EQ(logger->getLastLoggedMessage(), messageForLog + "info");
 }
 
 TEST_F(GlobalLoggerTest, testMockLoggerWarningMethodFromGlobalLogger) {
     std::string const messageForLog = "someMessage";
 
     ASSERT_TRUE(logger->getLastLoggedMessage().empty());
-    ASSERT_NO_THROW(Logger::logWarning(messageForLog));
-    ASSERT_EQ(logger->getLastLoggedMessage(), messageForLog + "warning");
+    EXPECT_NO_THROW(Logger::logWarning(messageForLog));
+    EXPECT_EQ(logger->getLastLoggedMessage(), messageForLog + "warning");
 }
 
 TEST_F(GlobalLoggerTest, testMockLoggerErrorMethodFromGlobalLogger) {
     std::string const messageForLog = "someMessage";
 
     ASSERT_TRUE(logger->getLastLoggedMessage().empty());
-    ASSERT_NO_THROW(Logger::logError(messageForLog));
-    ASSERT_EQ(logger->getLastLoggedMessage(), messageForLog + "error");
+    EXPECT_NO_THROW(Logger::logError(messageForLog));
+    EXPECT_EQ(logger->getLastLoggedMessage(), messageForLog + "error");
 }
 
 TEST_F(GlobalLoggerTest, testMockLoggerCriticalMethodFromGlobalLogger) {
     std::string const messageForLog = "someMessage";
 
     ASSERT_TRUE(logger->getLastLoggedMessage().empty());
-    ASSERT_NO_THROW(Logger::logCritical(messageForLog));
-    ASSERT_EQ(logger->getLastLoggedMessage(), messageForLog + "critical");
+    EXPECT_NO_THROW(Logger::logCritical(messageForLog));
+    EXPECT_EQ(logger->getLastLoggedMessage(), messageForLog + "critical");
 }
 

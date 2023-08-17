@@ -21,8 +21,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithLowerCaseAlphabet) {
     }
 
     std::string result;
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(lowerCaseAlphabetFirstSymbols));
-    ASSERT_EQ(result, expectedStringForFirstTwentySymbols);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(lowerCaseAlphabetFirstSymbols));
+    EXPECT_EQ(result, expectedStringForFirstTwentySymbols);
 
     const std::size_t diff = alphabetSize - lowerCaseAlphabetLastSymbols.size();
     for(std::size_t i = diff; i < alphabetSize; ++i) {
@@ -30,8 +30,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithLowerCaseAlphabet) {
         lowerCaseAlphabetLastSymbols[i - diff] = static_cast<std::byte>(currSymbol);
         expectedStringForLastTwentySymbols.push_back(currSymbol);
     }
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(lowerCaseAlphabetLastSymbols));
-    ASSERT_EQ(result, expectedStringForLastTwentySymbols);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(lowerCaseAlphabetLastSymbols));
+    EXPECT_EQ(result, expectedStringForLastTwentySymbols);
 }
 
 TEST(HashMethodsTest, TestUrlEncodeWithUpperCaseAlphabet) {
@@ -48,8 +48,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithUpperCaseAlphabet) {
     }
 
     std::string result;
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(upperCaseAlphabetFirstSymbols));
-    ASSERT_EQ(result, expectedStringForFirstTwentySymbols);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(upperCaseAlphabetFirstSymbols));
+    EXPECT_EQ(result, expectedStringForFirstTwentySymbols);
 
     const std::size_t diff = alphabetSize - upperCaseAlphabetLastSymbols.size();
     for(std::size_t i = diff; i < alphabetSize; ++i) {
@@ -57,8 +57,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithUpperCaseAlphabet) {
         upperCaseAlphabetLastSymbols[i - diff] = static_cast<std::byte>(currSymbol);
         expectedStringForLastTwentySymbols.push_back(currSymbol);
     }
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(upperCaseAlphabetLastSymbols));
-    ASSERT_EQ(result, expectedStringForLastTwentySymbols);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(upperCaseAlphabetLastSymbols));
+    EXPECT_EQ(result, expectedStringForLastTwentySymbols);
 }
 
 TEST(HashMethodsTest, TestUrlEncodeWithDigits) {
@@ -72,8 +72,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithDigits) {
     }
 
     std::string result;
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(digits));
-    ASSERT_EQ(result, expectedString);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(digits));
+    EXPECT_EQ(result, expectedString);
 }
 
 TEST(HashMethodsTest, TestUrlEncodeWithSpaceSymbols) {
@@ -88,8 +88,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithSpaceSymbols) {
     }
 
     std::string result;
-    ASSERT_NO_THROW(result = hash::urlEncodeHash(hash));
-    ASSERT_EQ(result, expectedString);
+    EXPECT_NO_THROW(result = hash::urlEncodeHash(hash));
+    EXPECT_EQ(result, expectedString);
 }
 
 TEST(HashMethodsTest, TestUrlEncodeWithNonAlphaAndNonDigitSymbols) {
@@ -115,8 +115,8 @@ TEST(HashMethodsTest, TestUrlEncodeWithNonAlphaAndNonDigitSymbols) {
 
         std::string expectedString = std::accumulate(expectedSymbols.begin(), expectedSymbols.end(), std::string(""));
         std::string result;
-        ASSERT_NO_THROW(result = hash::urlEncodeHash(hash));
-        ASSERT_EQ(result.size(), 60);
-        ASSERT_EQ(expectedString, result);
+        EXPECT_NO_THROW(result = hash::urlEncodeHash(hash));
+        EXPECT_EQ(result.size(), 60);
+        EXPECT_EQ(expectedString, result);
     }
 }

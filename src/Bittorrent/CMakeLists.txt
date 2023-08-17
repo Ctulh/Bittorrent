@@ -11,7 +11,7 @@ set(HEADERS ${HEADERS_PATH}/TorrentFile.hpp
 set(SOURCES TorrentFile.cpp
             PeerInfo.cpp
             Peer.cpp
-            BittorrentMessageBuilder.cpp)
+        BittorrentMessages/BittorrentMessageBuilder.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

@@ -11,10 +11,10 @@ TEST(TorrentFileTest, readAnnounceTest) {
 
     std::unique_ptr<TorrentFile> torrentFile;
 
-    ASSERT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
+    EXPECT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
     std::string announce;
-    ASSERT_NO_THROW(announce = torrentFile->getAnnounce());
-    ASSERT_EQ(announce, expectedAnnounce);
+    EXPECT_NO_THROW(announce = torrentFile->getAnnounce());
+    EXPECT_EQ(announce, expectedAnnounce);
 }
 
 TEST(TorrentFileTest, readTotalBytesLengthTest) {
@@ -23,10 +23,10 @@ TEST(TorrentFileTest, readTotalBytesLengthTest) {
 
     std::unique_ptr<TorrentFile> torrentFile;
 
-    ASSERT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
+    EXPECT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
     std::string totalBytesLength;
-    ASSERT_NO_THROW(totalBytesLength = torrentFile->getTotalBytesLeft());
-    ASSERT_EQ(expectedTotalBytesLeft, totalBytesLength);
+    EXPECT_NO_THROW(totalBytesLength = torrentFile->getTotalBytesLeft());
+    EXPECT_EQ(expectedTotalBytesLeft, totalBytesLength);
 }
 
 TEST(TorrentFileTest, readInfoHashTest) {
@@ -38,8 +38,8 @@ TEST(TorrentFileTest, readInfoHashTest) {
 
     std::unique_ptr<TorrentFile> torrentFile;
 
-    ASSERT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
+    EXPECT_NO_THROW(torrentFile = std::make_unique<TorrentFile>(torrentFilename));
     TorrentHash infoHash;
-    ASSERT_NO_THROW(infoHash = torrentFile->getInfoHash());
-    ASSERT_EQ(infoHash, expectedHash);
+    EXPECT_NO_THROW(infoHash = torrentFile->getInfoHash());
+    EXPECT_EQ(infoHash, expectedHash);
 }
