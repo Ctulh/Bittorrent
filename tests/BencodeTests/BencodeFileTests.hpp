@@ -43,3 +43,14 @@ TEST(BencodeFileTest, readInfoHash) {
     EXPECT_NO_THROW(infoHash = torrentFile->getInfoHash());
     EXPECT_EQ(infoHash, expectedHash);
 }
+
+TEST(BencodeFileTest, getFiles) {
+    const std::string torrentFilename = "test.torrent";
+    std::unique_ptr<BencodeFile> torrentFile;
+    const std::size_t filesAmount = 2;
+    std::vector<std::string> files;
+
+    EXPECT_NO_THROW(torrentFile = std::make_unique<BencodeFile>(torrentFilename));
+    EXPECT_NO_THROW(files = torrentFile->getFiles());
+    EXPECT_EQ(files.size(), filesAmount);
+}

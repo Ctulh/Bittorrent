@@ -25,7 +25,7 @@ FileReader::FileReader(std::string const& path): m_path(path) {
 
     std::string currPath;
 
-    int i = 0;
+    std::size_t i = 0;
     if(!m_path.empty() && m_path[0] == '/')
         currPath += '/';
     else if(!path.empty() && std::regex_match(pathComponents[0], windowsGlobalPathRegex)) {

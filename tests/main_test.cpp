@@ -11,6 +11,7 @@
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
 #include "BencodeTests/BencodeFileTests.hpp"
+#include "BittorrentTests/TorrentFileTests.hpp"
 #include "BittorrentTests/BittorrentMessageBuilderTests.hpp"
 
 int main(int argc, char** argv) {

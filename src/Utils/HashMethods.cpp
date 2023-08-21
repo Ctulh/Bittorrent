@@ -43,13 +43,13 @@ std::string hash::urlEncodeHash(const hash::Sha1Hash &hash) {
     for(auto el: hash) {
         int elNumber = static_cast<int>(el);
         if(elNumber >= 0x61 && elNumber <= 0x7a) {
-            output.push_back('a' + elNumber - 0x61);
+            output.push_back(static_cast<char>('a' + elNumber - 0x61));
         }
         else if(elNumber >= 0x41 && elNumber <= 0x5a) {
-            output.push_back('A' + elNumber - 0x41);
+            output.push_back(static_cast<char>('A' + elNumber - 0x41));
         }
         else if(elNumber >=0x30 && elNumber <= 0x39) {
-            output.push_back('0' + elNumber - 0x30);
+            output.push_back(static_cast<char>('0' + elNumber - 0x30));
         }
         else if(elNumber == 0x20) {
             output.push_back('+');
