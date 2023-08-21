@@ -10,7 +10,7 @@ set(HEADERS
              BencodeParsingTests.hpp
              FileReaderTests.hpp
              LoggerTests.hpp
-             BittorrentTests/TorrentFileTests.hpp
+             BencodeTests/BencodeFileTests.hpp
              UtilsTests/HashMethodsTest.hpp
              UtilsTests/StringOperationsTest.hpp)
 
@@ -28,4 +28,4 @@ add_custom_command(TARGET ${TEST_NAME} POST_BUILD
 
 add_custom_command(TARGET ${TEST_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_SOURCE_DIR}/tests/BittorrentTests/test.torrent ${PROJECT_BINARY_DIR}/bin/test.torrent)
+        ${PROJECT_SOURCE_DIR}/tests/BencodeTests/test.torrent ${PROJECT_BINARY_DIR}/bin/test.torrent)

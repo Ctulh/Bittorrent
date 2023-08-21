@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "TorrentFile.hpp"
+#include "BencodeFile.hpp"
 
 #include <string>
 
 class TorrentFileBuilder {
 public:
-    static TorrentFile buildFromFile(std::string const& filepath);
+    static BencodeFile buildFromFile(std::string const& filepath);
 };

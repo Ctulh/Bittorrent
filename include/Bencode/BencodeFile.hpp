@@ -12,13 +12,14 @@ using TorrentHash = std::array<std::byte, 20>;
  * @brief Class that represents file with torrent extension.
  */
 
-class TorrentFile {
+class BencodeFile {
 public:
-    explicit TorrentFile(std::string const& path);
+    explicit BencodeFile(std::string const& path);
 
 public:
     std::string getAnnounce();
     std::string getTotalBytesLeft();
+    std::vector<std::string> getFiles();
     TorrentHash getInfoHash();
 
 private:

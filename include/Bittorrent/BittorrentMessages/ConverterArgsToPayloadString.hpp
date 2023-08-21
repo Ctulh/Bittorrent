@@ -142,15 +142,15 @@ public:
 template<>
 class ConverterArgsToPayloadString<MessageType::PORT> {
 public:
-    ConverterArgsToPayloadString() = delete;
+    ConverterArgsToPayloadString () = delete;
 public:
     static std::string getPayload(unsigned short port) {
         std::stringstream messageStream;
         port = htons(port);
-        char* ptr = reinterpret_cast<char*>(&port);
-        messageStream << *ptr;
+        auto ptr = reinterpret_cast<std::byte*>(&port);
+        messageStream << static_cast<char>(*ptr);
         ++ptr;
-        messageStream << *ptr;
+        messageStream << static_cast<char>(*ptr);
         return messageStream.str();
     }
 };

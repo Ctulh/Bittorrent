@@ -94,6 +94,26 @@ TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForHaveMessageType) {
     EXPECT_EQ(expectedResult, result);
 }
 
+TEST(ConverterArgsToPayloadStringTest, BuildEmptyBitfieldMessage) {
+    const MessageType messageType = MessageType::BITFIELD;
+    const std::vector<std::byte> bitfield = {};
+
+    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
+
+    EXPECT_TRUE(result.empty());
+}
+
+TEST(ConverterArgsToPayloadStringTest, BuildBitfieldMessageWithOneBytes) {
+    const MessageType messageType = MessageType::BITFIELD;
+    const std::vector<std::byte> bitfield = {std::byte(0x1)};
+
+    const std::string expectedResult(1, static_cast<char>(std::byte(0x1)));
+
+    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
+
+    EXPECT_EQ(expectedResult, result);
+}
+
 TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForBitfieldMessageType) {
     const MessageType messageType = MessageType::BITFIELD;
     const std::vector<std::byte> bitfield = {std::byte(0x1), std::byte(0x2), std::byte(0x3)};

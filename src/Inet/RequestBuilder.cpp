@@ -15,7 +15,7 @@ namespace http = beast::http;
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 
-httpRequest RequestBuilder::buildTrackerRequest(TorrentFile &torrentFile, std::string const& host) {
+httpRequest RequestBuilder::buildTrackerRequest(BencodeFile &torrentFile, std::string const& host) {
     const int httpVersion = 11;
 
     std::stringstream ss;

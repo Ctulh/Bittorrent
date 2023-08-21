@@ -4,11 +4,11 @@ set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 set(HEADERS_PATH ${PROJECT_SOURCE_DIR}/include/Bittorrent)
 
-set(HEADERS ${HEADERS_PATH}/TorrentFile.hpp
+set(HEADERS
             ${HEADERS_PATH}/PeerInfo.hpp
             ${HEADERS_PATH}/Peer.hpp)
 
-set(SOURCES TorrentFile.cpp
+set(SOURCES
             PeerInfo.cpp
             Peer.cpp
         BittorrentMessages/BittorrentMessageBuilder.cpp)

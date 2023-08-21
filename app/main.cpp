@@ -5,7 +5,7 @@
 #include "InetService.hpp"
 #include "RequestBuilder.hpp"
 #include "InetService.hpp"
-#include "Bittorrent/TorrentFile.hpp"
+#include "Bencode/BencodeFile.hpp"
 #include <algorithm>
 #include <RequestSender.hpp>
 #include "Utils/UrlMethods.hpp"
@@ -93,7 +93,13 @@ private:
 int main() {
     boost::asio::io_context context;
     Logger::addLogger("spdLogger", std::make_shared<LoggerSpdlog>("spdLogger", "logs.txt"));
-    TorrentFile torrentFile("/home/ctuh/Downloads/test2.torrent");
+    BencodeFile torrentFile("/home/ctuh/Downloads/test2.torrent");
+
+    auto files = torrentFile.getFiles();
+    for(auto file: files) {
+        std::cout << file << std::endl;
+    }
+    return 0;
 
     std::string announce = torrentFile.getAnnounce();
     auto request = RequestBuilder::buildTrackerRequest(torrentFile, UrlMethods::getDomainName(announce));
