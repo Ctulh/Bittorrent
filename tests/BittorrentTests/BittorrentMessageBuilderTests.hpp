@@ -34,52 +34,61 @@ public:
 TEST_F(MessageBuilderFixture, BuildMessageWitoutPayload) {
     const MessageType messageTypeWithoutPayload = MessageType::CHOKE;
     builder.setMessageType(messageTypeWithoutPayload);
-    const std::string expectedResult = "10";
+    const std::vector<std::byte> expectedResult = {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                   std::byte(0x0)};
 
-    const std::string result = builder.getMessage();
+    const std::vector<std::byte> result = builder.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST_F(MessageBuilderFixture, SetPayloadInBuilderAndBuildMessageTypeWitouthPayloadPart) {
     const MessageType messageTypeWithoutPayload = MessageType::CHOKE;
+    const std::vector<std::byte> payload{std::byte(0xFF), std::byte(0xAA)};
+    const std::vector<std::byte> expectedResult = {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                   std::byte(0x0)};
     builder.setMessageType(messageTypeWithoutPayload);
-    builder.setPayload("somePayload");
-    const std::string expectedResult = "10";
+    builder.setPayload(payload);
 
-    const std::string result = builder.getMessage();
+    const std::vector<std::byte> result = builder.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST_F(MessageBuilderFixture, BuildMessageWithPayload) {
     const MessageType messageTypeWithPayload = MessageType::HAVE;
+    const std::vector<std::byte> payload{std::byte(0xFF), std::byte(0xAA)};
+    const std::vector<std::byte> expectedResult = {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x3),
+                                                   std::byte(0x4),
+                                                   payload[0], payload[1]};
     builder.setMessageType(messageTypeWithPayload);
-    builder.setPayload("1234");
-    const std::string expectedResult = "541234";
+    builder.setPayload(payload);
 
-    const std::string result = builder.getMessage();
+    const std::vector<std::byte> result = builder.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST_F(MessageBuilderFixture, BuildKeepAliveMessage) {
     const MessageType messageTypeKeepAlive = MessageType::KEEP_ALIVE;
+    const std::vector<std::byte> expectedResult = {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x0)};
     builder.setMessageType(messageTypeKeepAlive);
-    const std::string expectedResult = "0";
 
-    const std::string result = builder.getMessage();
+    const std::vector<std::byte> result = builder.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST_F(MessageBuilderFixture, BuildKeepAliveMessageWithPayload) {
     const MessageType messageTypeKeepAlive = MessageType::KEEP_ALIVE;
+    const std::vector<std::byte> payload {std::byte(0x1), std::byte(0x2), std::byte(0x3), std::byte(0x4)};
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x0),
+                                                };
     builder.setMessageType(messageTypeKeepAlive);
-    builder.setPayload("1234");
-    const std::string expectedResult = "0";
+    builder.setPayload(payload);
 
-    const std::string result = builder.getMessage();
+    const std::vector<std::byte> result = builder.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -87,9 +96,9 @@ TEST_F(MessageBuilderFixture, BuildKeepAliveMessageWithPayload) {
 TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForHaveMessageType) {
     const MessageType messageType = MessageType::HAVE;
     const int pieceLength = 123;
-    const std::string expectedResult = "0123";
+    const std::vector<std::byte> expectedResult = {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(123)};
 
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(pieceLength);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(pieceLength);
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -98,7 +107,7 @@ TEST(ConverterArgsToPayloadStringTest, BuildEmptyBitfieldMessage) {
     const MessageType messageType = MessageType::BITFIELD;
     const std::vector<std::byte> bitfield = {};
 
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
 
     EXPECT_TRUE(result.empty());
 }
@@ -106,10 +115,9 @@ TEST(ConverterArgsToPayloadStringTest, BuildEmptyBitfieldMessage) {
 TEST(ConverterArgsToPayloadStringTest, BuildBitfieldMessageWithOneBytes) {
     const MessageType messageType = MessageType::BITFIELD;
     const std::vector<std::byte> bitfield = {std::byte(0x1)};
+    const std::vector<std::byte> expectedResult {std::byte(0x1)};
 
-    const std::string expectedResult(1, static_cast<char>(std::byte(0x1)));
-
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -117,9 +125,9 @@ TEST(ConverterArgsToPayloadStringTest, BuildBitfieldMessageWithOneBytes) {
 TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForBitfieldMessageType) {
     const MessageType messageType = MessageType::BITFIELD;
     const std::vector<std::byte> bitfield = {std::byte(0x1), std::byte(0x2), std::byte(0x3)};
-    const std::string expectedResult = std::string("") + static_cast<char>(0x1) + static_cast<char>(0x2) + static_cast<char>(0x3);
+    const std::vector<std::byte> expectedResult {bitfield[0], bitfield[1], bitfield[2]};
 
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(bitfield);
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -129,9 +137,13 @@ TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForRequestMessageType) 
     const int index = 1;
     const int begin = 2;
     const int length = 3;
-    const std::string expectedResult = "000100020003";
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(length),
+                                                };
 
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(index, begin, length);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(index, begin, length);
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -140,76 +152,114 @@ TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForPieceMessageType) {
     const MessageType messageType = MessageType::PIECE;
     const int index = 1;
     const int begin = 2;
-    const std::vector<char> block {'a', 'b', 'c'};
-    const std::string expectedResult = "00010002abc";
+    const std::vector<std::byte> block {std::byte(0xAA), std::byte(0xBB), std::byte(0xCC)};
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                    block[0], block[1], block[2]
+                                                };
 
-    const std::string result = ConverterArgsToPayloadString<messageType>::getPayload(index, begin, block);
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(index, begin, block);
+
+    EXPECT_EQ(expectedResult, result);
+}
+
+TEST(ConverterArgsToPayloadStringTest, BuildPayloadStringForCancelMessageType) {
+    const MessageType messageType = MessageType::CANCEL;
+    const int index = 1;
+    const int begin = 2;
+    const int length = 3;
+    const std::vector<std::byte> expectedResult {
+                                                      std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                      std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                      std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(length),
+                                                };
+
+    const std::vector<std::byte> result = ConverterArgsToPayloadString<messageType>::getPayload(index, begin, length);
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(KeepAliveClassTest, GetMessageFromKeepAliveClass) {
-    const std::string expectedResult = "0";
+    const std::vector<std::byte> expectedResult {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x0)};
 
-    const std::string result = KeepAlive().getMessage();
+    const std::vector<std::byte> result = KeepAlive().getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(ChokeClassTest, GetMessageFromChokeClass) {
-    const std::string expectedResult = "10";
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                    std::byte(0x0)
+                                                };
     Choke choke;
 
-    const std::string result = choke.getMessage();
+    const std::vector<std::byte> result = choke.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(UnchokeClassTest, GetMessageFromUnchokeClass) {
-    const std::string expectedResult = "11";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                     std::byte(0x1),
+                                                };
     Unchoke unchoke;
 
-    const std::string result = unchoke.getMessage();
+    const std::vector<std::byte> result = unchoke.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(InterestedClassTest, GetMessageFromInterestedClass) {
-    const std::string expectedResult = "12";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                     std::byte(0x2),
+                                                };
     Interested interested;
 
-    const std::string result = interested.getMessage();
+    const std::vector<std::byte> result = interested.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(NotInterestedClassTest, GetMessageFromNotInterestedClass) {
-    const std::string expectedResult = "13";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
+                                                     std::byte(0x3),
+                                                };
     NotInterested notInterested;
 
-    const std::string result = notInterested.getMessage();
+    const std::vector<std::byte> result = notInterested.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(HaveClassTest, GetMessageFromHaveClass) {
     const int pieceIndex = 12;
-    const std::string expectedResult = "540012";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x5),
+                                                     std::byte(0x4),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(12),
+                                                };
     Have have(pieceIndex);
 
-    const std::string result = have.getMessage();
+    const std::vector<std::byte> result = have.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
 
 TEST(BitfieldClassTest, GetMessageFromBitfieldClass) {
     const std::vector<std::byte> bitfieldValue {std::byte(0x1), std::byte(0x2), std::byte(0x3)};
-    const std::string expectedResult = std::string("45") + static_cast<char>(std::byte(0x1))
-                                                         + static_cast<char>(std::byte(0x2))
-                                                         + static_cast<char>(std::byte(0x3));
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x4),
+                                                     std::byte(0x5),
+                                                     bitfieldValue[0], bitfieldValue[1], bitfieldValue[2],
+                                                };
     Bitfield bitfield(bitfieldValue);
 
-    const std::string result = bitfield.getMessage();
+    const std::vector<std::byte> result = bitfield.getMessage();
 }
 
 TEST(RequestClassTest, GetMessageFromRequestClass) {
@@ -217,9 +267,15 @@ TEST(RequestClassTest, GetMessageFromRequestClass) {
     const int begin = 2;
     const int length = 3;
     Request request(index, begin, length);
-    const std::string expectedResult = "136000100020003";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(13),
+                                                     std::byte(0x6),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(length),
+                                                };
 
-    const std::string result = request.getMessage();
+    const std::vector<std::byte> result = request.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -227,11 +283,18 @@ TEST(RequestClassTest, GetMessageFromRequestClass) {
 TEST(PieceClassTest, GetMessageFromPieceClass) {
     const int index = 1;
     const int begin = 2;
-    const std::vector<char> block {'a', 'b', 'c'};
+    const std::vector<std::byte> block {std::byte(0xAA), std::byte(0xBB), std::byte(0xCC)};
     Piece piece(index, begin, block);
-    const std::string expectedResult = "12700010002abc";
 
-    const std::string result = piece.getMessage();
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(12),
+                                                    std::byte(0x7),
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                    block[0], block[1], block[2],
+                                                };
+
+    const std::vector<std::byte> result = piece.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -241,9 +304,15 @@ TEST(CancelClassTest, GetMessageFromCancelClass) {
     const int begin = 2;
     const int length = 3;
     Cancel cancel(index, begin, length);
-    const std::string expectedResult = "138000100020003";
+    const std::vector<std::byte> expectedResult {
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(13),
+                                                     std::byte(0x8),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(index),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(begin),
+                                                     std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(length),
+                                                };
 
-    const std::string result = cancel.getMessage();
+    const std::vector<std::byte> result = cancel.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }
@@ -251,9 +320,13 @@ TEST(CancelClassTest, GetMessageFromCancelClass) {
 TEST(PortClasstest, GetMessageFromPortClass) {
     const unsigned short portValue = 16706;
     Port port(portValue);
-    const std::string expectedResult = "39AB";
+    const std::vector<std::byte> expectedResult {
+                                                    std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x3),
+                                                    std::byte(0x9),
+                                                    std::byte(65), std::byte(66)
+                                                };
 
-    std::string result = port.getMessage();
+    std::vector<std::byte> result = port.getMessage();
 
     EXPECT_EQ(expectedResult, result);
 }

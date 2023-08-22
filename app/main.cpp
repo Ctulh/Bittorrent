@@ -13,11 +13,14 @@
 #include "Logger/Logger.hpp"
 #include "Logger/LoggerSpdlog.hpp"
 #include "Utils/HashMethods.hpp"
+#include "Inet/SocketPoller.hpp"
+
 
 #include <boost/asio.hpp>
 #include <atomic>
 #include <mutex>
 #include <shared_mutex>
+#include <chrono>
 
 #include "Bittorrent/Peer.hpp"
 
@@ -26,9 +29,13 @@ std::size_t totalPeers = 0;
 #include "Bittorrent/BittorrentMessages/BittorrentMessageBuilder.hpp"
 #include "Bittorrent/BittorrentMessages/Interested.hpp"
 #include "Bittorrent/BittorrentMessages/Request.hpp"
-
+#include "Utils/ByteMethods.hpp"
 
 int main() {
+
+
+
+    return 0;
     boost::asio::io_context context;
     Logger::addLogger("spdLogger", std::make_shared<LoggerSpdlog>("spdLogger", "logs.txt"));
     BencodeFile torrentFile("/home/ctuh/Downloads/3.torrent");
@@ -73,23 +80,11 @@ int main() {
         if(peer->handshake(reqStr)) {
             auto socket = peer->getSocket();
             Interested interested;
-            socket.setSendTimeout(std::chrono::milliseconds(10000));
-            socket.setReceiveTimeout(std::chrono::milliseconds(10000));
-            socket.send(interested.getMessage());
-            std::string response;
-            socket.receive(response);
-            Logger::logInfo(response);
+            socket->send(interested.getMessage());
         }
     }
 
-
-    context.run();
-
-    for(auto& peer: peers) {
-        std::cout << peer.get() << std::endl;
-    }
-
-
+    //t1.join();
     //Peer peer(context, peerInfo);
     //std::cout << peer.getResponse(requestStr) << std::endl;
 

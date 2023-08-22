@@ -12,7 +12,7 @@ public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::PIECE;
 
 public:
-    explicit Piece(int index, int begin, std::vector<char> const& block) {
-        m_payload = ConverterArgsToPayloadString<MESSAGE_TYPE>::getPayload(index, begin, block); //TODO change block type to std::vector<std::byte> or change type in bitfield to std::vector<char>
+    explicit Piece(int index, int begin, std::vector<std::byte> const& block) {
+        m_payload = ConverterArgsToPayloadString<MESSAGE_TYPE>::getPayload(index, begin, block);
     }
 };

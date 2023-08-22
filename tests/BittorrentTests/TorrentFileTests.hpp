@@ -10,72 +10,7 @@
 #include <filesystem>
 #include <fstream>
 
-enum class TorrentFileStatus {
-    NotDownloaded = 0,
-    PartiallyDownloaded = 1,
-    Complete = 2,
-    Paused = 3,
-    Error = 4,
-};
-
-class TorrentFile {
-public:
-    TorrentFile(std::string const& filePath, std::size_t size, std::size_t fileOffset = 0): m_filePath(filePath),
-                                                                m_totalSize(size),
-                                                                m_fileStatus(TorrentFileStatus::NotDownloaded),
-                                                                m_bytesDownloaded(0),
-                                                                m_fileOffset(fileOffset) {
-        m_fileStream.open(m_filePath, std::ios::binary | std::ios::out);
-    }
-
-    ~TorrentFile() {
-        if(m_fileStream.is_open())
-            m_fileStream.close();
-    }
-
-public:
-    std::string getFilePath() const {
-        return m_filePath;
-    }
-
-    std::size_t getSize() const {
-        return m_totalSize;
-    }
-
-    TorrentFileStatus getStatus() const {
-        if(m_fileStatus == TorrentFileStatus::NotDownloaded && m_bytesDownloaded > 0 && m_bytesDownloaded < m_totalSize)
-            m_fileStatus = TorrentFileStatus::PartiallyDownloaded;
-        else if(m_fileStatus == TorrentFileStatus::NotDownloaded && m_bytesDownloaded == m_totalSize)
-            m_fileStatus = TorrentFileStatus::Complete;
-        return m_fileStatus;
-    }
-
-    void writeData(std::vector<std::byte> data, std::size_t offset = 0) { // TODO realize offset
-        m_fileStream.write(reinterpret_cast<char*>(data.data()), static_cast<long>(data.size()));
-        m_bytesDownloaded += data.size();
-    }
-
-    std::size_t getBytesDownloaded() const {
-        return m_bytesDownloaded;
-    }
-
-    std::size_t getBytesLeft() const {
-        return m_totalSize - m_bytesDownloaded;
-    }
-
-    std::size_t getGlobalOffset() const {
-        return m_fileOffset + m_bytesDownloaded;
-    }
-
-private:
-    std::ofstream m_fileStream;
-    mutable TorrentFileStatus m_fileStatus;
-    std::size_t m_totalSize;
-    std::size_t m_bytesDownloaded;
-    std::size_t m_fileOffset;
-    std::string m_filePath;
-};
-
+#include <Bittorrent/TorrentFile.hpp>
 
 class TorrentFileTestFixture: public testing::Test {
 public:

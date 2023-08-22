@@ -13,12 +13,12 @@ public:
     virtual ~IBittorrentMessage() = default;
 
 public:
-    virtual std::string getMessage() const {
+    virtual std::vector<std::byte> getMessage() const {
         BittorrentMessageBuilder builder;
         builder.setMessageType(messageTypeValue);
         builder.setPayload(m_payload);
         return builder.getMessage();
     }
 protected:
-    std::string m_payload;
+    std::vector<std::byte> m_payload;
 };

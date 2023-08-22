@@ -3,8 +3,9 @@
 //
 
 #include "BittorrentMessages/BittorrentMessageBuilder.hpp"
+#include "Utils/ByteMethods.hpp"
 
-#include <sstream>
+#include <cmath>
 
 BittorrentMessageBuilder::BittorrentMessageBuilder() {
     m_messageTypesWithPayload = {MessageType::HAVE, MessageType::BITFIELD, MessageType::REQUEST, MessageType::PIECE, MessageType::CANCEL, MessageType::PORT};
@@ -13,12 +14,12 @@ void BittorrentMessageBuilder::setMessageType(MessageType messageType) {
     m_messageType = messageType;
 }
 
-void BittorrentMessageBuilder::setPayload(std::string const& payload) {
+void BittorrentMessageBuilder::setPayload(std::vector<std::byte> const& payload) {
     m_payload = payload;
 }
-std::string BittorrentMessageBuilder::getMessage() const {
+std::vector<std::byte> BittorrentMessageBuilder::getMessage() const {
     if(m_messageType == MessageType::KEEP_ALIVE) {
-        return "0";
+        return {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x0)};
     }
     else if(m_messageTypesWithPayload.contains(m_messageType)) {
         return buildStringForPayload();
@@ -26,14 +27,20 @@ std::string BittorrentMessageBuilder::getMessage() const {
     return buildStringForMessageWithoutPayload();
 }
 
-std::string BittorrentMessageBuilder::buildStringForPayload() const {
-    std::stringstream messageStream;
-    messageStream << m_payload.size() + 1 << static_cast<int>(m_messageType) << m_payload;
-    return messageStream.str();
+std::vector<std::byte> BittorrentMessageBuilder::buildStringForPayload() const {
+    std::vector<std::byte> message;
+    std::size_t size = m_payload.size() + 1;
+
+    auto sizeBytes = ByteMethods::convertNumberToFourBytes(size);
+
+    message.insert(message.begin(), sizeBytes.begin(), sizeBytes.end());
+    message.push_back(static_cast<std::byte>(m_messageType));
+    message.insert(message.end(), m_payload.begin(), m_payload.end());
+    return message;
 }
 
-std::string BittorrentMessageBuilder::buildStringForMessageWithoutPayload() const {
-    std::stringstream messageStream;
-    messageStream << 1 << static_cast<int>(m_messageType);
-    return messageStream.str();
+std::vector<std::byte> BittorrentMessageBuilder::buildStringForMessageWithoutPayload() const {
+    std::vector<std::byte> message {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1)};
+    message.push_back(static_cast<std::byte>(m_messageType));
+    return message;
 }

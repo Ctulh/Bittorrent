@@ -8,6 +8,7 @@
 #include "UtilsTests/StringOperationsTest.hpp"
 #include "UtilsTests/HashMethodsTest.hpp"
 #include "UtilsTests/UrlMethodsTest.hpp"
+#include "UtilsTests/ByteMethodsTest.hpp"
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
 #include "BencodeTests/BencodeFileTests.hpp"

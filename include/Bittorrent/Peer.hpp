@@ -16,10 +16,10 @@ public:
     Peer(PeerInfo const& peerInfo);
 public:
     bool handshake(std::string const& request);
-    StreamSocket& getSocket() {
+    StreamSocketPtr getSocket() {
         return m_streamSocket;
     }
 private:
     PeerInfo m_peerInfo;
-    StreamSocket m_streamSocket;
+    StreamSocketPtr m_streamSocket;
 };
