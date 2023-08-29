@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class Bitfield: public IBittorrentMessage<MessageType::BITFIELD> {
+class Bitfield: public IBittorrentMessageBuildable<MessageType::BITFIELD> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::BITFIELD;
 

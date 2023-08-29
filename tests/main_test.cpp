@@ -13,7 +13,10 @@
 #include "LoggerTests.hpp"
 #include "BencodeTests/BencodeFileTests.hpp"
 #include "BittorrentTests/TorrentFileTests.hpp"
+#include "BittorrentTests/BittorrentMessageTests.hpp"
 #include "BittorrentTests/BittorrentMessageBuilderTests.hpp"
+#include "BittorrentTests/BittorrentMessageParserTests.hpp"
+
 
 int main(int argc, char** argv) {
     using testing::InitGoogleTest;

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class Port: public IBittorrentMessage<MessageType::PORT> {
+class Port: public IBittorrentMessageBuildable<MessageType::PORT> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::PORT;
 

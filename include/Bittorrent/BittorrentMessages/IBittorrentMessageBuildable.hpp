@@ -6,12 +6,12 @@
 
 #include "BittorrentMessageType.hpp"
 #include "BittorrentMessageBuilder.hpp"
+#include "BittorrentMessage.hpp"
 
 template<MessageType messageTypeValue>
-class IBittorrentMessage {
+class IBittorrentMessageBuildable: public BittorrentMessage {
 public:
-    virtual ~IBittorrentMessage() = default;
-
+    IBittorrentMessageBuildable(): BittorrentMessage(messageTypeValue) {}
 public:
     virtual std::vector<std::byte> getMessage() const {
         BittorrentMessageBuilder builder;
@@ -19,6 +19,4 @@ public:
         builder.setPayload(m_payload);
         return builder.getMessage();
     }
-protected:
-    std::vector<std::byte> m_payload;
 };

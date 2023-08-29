@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class Choke: public IBittorrentMessage<MessageType::CHOKE> {
+class Choke: public IBittorrentMessageBuildable<MessageType::CHOKE> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::CHOKE;
 

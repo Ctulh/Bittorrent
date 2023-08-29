@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class NotInterested: public IBittorrentMessage<MessageType::NOT_INTERESTED> {
+class NotInterested: public IBittorrentMessageBuildable<MessageType::NOT_INTERESTED> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::NOT_INTERESTED;
 

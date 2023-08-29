@@ -29,13 +29,11 @@ std::size_t totalPeers = 0;
 #include "Bittorrent/BittorrentMessages/BittorrentMessageBuilder.hpp"
 #include "Bittorrent/BittorrentMessages/Interested.hpp"
 #include "Bittorrent/BittorrentMessages/Request.hpp"
+#include "Bittorrent/BittorrentMessages/BittorrentMessageParser.hpp"
 #include "Utils/ByteMethods.hpp"
 
 int main() {
 
-
-
-    return 0;
     boost::asio::io_context context;
     Logger::addLogger("spdLogger", std::make_shared<LoggerSpdlog>("spdLogger", "logs.txt"));
     BencodeFile torrentFile("/home/ctuh/Downloads/3.torrent");
@@ -76,35 +74,40 @@ int main() {
         peers.push_back(std::make_shared<Peer>(peerInfo));
     }
 
+    SocketPoller poller(10, 10000);
+
+    auto callback = [](std::vector<std::byte> const& message, StreamSocketPtr streamSocket) {
+        auto inetAddr = streamSocket->getInetAddress();
+        try {
+            Logger::logInfo(std::format("Got message on {}:{}", inetAddr.getHost(), inetAddr.getPort()));
+            auto messages = BittorrentMessageParser::getMessages(message);
+            for(auto message: messages) {
+                std::cout << message << std::endl;
+            }
+        }
+        catch(std::exception& e) {
+            std::cout << e.what();
+        }
+    };
+
+    poller.setReceiveMessageCallback(callback);
+
+    std::thread t1([&poller]() {
+        while(true) {
+            poller.poll();
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    });
+
     for(auto& peer: peers) {
         if(peer->handshake(reqStr)) {
             auto socket = peer->getSocket();
             Interested interested;
             socket->send(interested.getMessage());
+            poller.add(socket);
         }
     }
 
-    //t1.join();
-    //Peer peer(context, peerInfo);
-    //std::cout << peer.getResponse(requestStr) << std::endl;
-
-
-    //std::vector<PeerWriter> peersVec;
-
-  //  for(const auto& peer: peers) {
-  //      auto fut = std::async(std::launch::async, [&peersVec, &peer, &reqStr, &context]() {
-   //         PeerWriter writer(peer, context, reqStr);
-  // //         writer.run();
-  //          peersVec.push_back(std::move(writer));
-  //      });
-   // }
-
-  //  std::this_thread::sleep_for(std::chrono::seconds(30));
-   // std::this_thread::sleep_for(std::chrono::seconds(60));
-
- //   std::thread t([&]() {
- //      context.run();
- //   });
- //   t.join();
+    t1.join();
 }
 

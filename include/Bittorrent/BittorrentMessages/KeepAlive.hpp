@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class KeepAlive: public IBittorrentMessage<MessageType::KEEP_ALIVE> {
+class KeepAlive: public IBittorrentMessageBuildable<MessageType::KEEP_ALIVE> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::KEEP_ALIVE;
 

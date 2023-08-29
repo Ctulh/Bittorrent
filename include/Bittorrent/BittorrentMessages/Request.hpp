@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class Request: public IBittorrentMessage<MessageType::REQUEST> {
+class Request: public IBittorrentMessageBuildable<MessageType::REQUEST> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::REQUEST;
 

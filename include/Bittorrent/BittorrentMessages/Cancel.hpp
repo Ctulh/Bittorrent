@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "IBittorrentMessage.hpp"
+#include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
 
-class Cancel: public IBittorrentMessage<MessageType::CANCEL> {
+class Cancel: public IBittorrentMessageBuildable<MessageType::CANCEL> {
 public:
     static constexpr MessageType MESSAGE_TYPE = MessageType::CANCEL;
 
