@@ -29,8 +29,10 @@ std::size_t totalPeers = 0;
 #include "Bittorrent/BittorrentMessages/BittorrentMessageBuilder.hpp"
 #include "Bittorrent/BittorrentMessages/Interested.hpp"
 #include "Bittorrent/BittorrentMessages/Request.hpp"
+#include "Bittorrent/BittorrentMessages/HandshakeMessageBuilder.hpp"
 #include "Bittorrent/BittorrentMessages/BittorrentMessageParser.hpp"
 #include "Utils/ByteMethods.hpp"
+#include "Bittorrent/BitTorrentIdentity.hpp"
 
 int main() {
 
@@ -47,23 +49,17 @@ int main() {
     auto request = RequestBuilder::buildTrackerRequest(torrentFile, UrlMethods::getDomainName(announce));
     auto response = RequestSender::sendRequest<TrackerResponse>(request, UrlMethods::getDomainName(announce), "80");
 
-   // std::cout << response.m_interval << std::endl;
-    //std::cout << response.m_peers << std::endl;
-
-
-
-    std::string reqStr;
-    reqStr.push_back(0x13);
-    reqStr += "BitTorrent protocol";
-    for(int i =0 ; i< 8;++i) {
-        reqStr.push_back(0x0);
-    }
-    auto torrentHash =  torrentFile.getInfoHash();
+    auto torrentHash = torrentFile.getInfoHash();
+    std::string infoHash;
     for(auto hashEl: torrentHash) {
-        reqStr.push_back(static_cast<char>(hashEl));
+        infoHash.push_back(static_cast<char>(hashEl));
     }
 
-    reqStr += "-TR2940-k8hj0wgej6ch";
+    HandshakeMessageBuilder builder;
+    builder.setInfoHash(infoHash);
+
+
+    std::string reqStr = builder.getMessage();
 
 
     auto peerInfos = response.getPeers();

@@ -12,7 +12,7 @@ TEST(BittorrentMessageParserTest, TestParseEmptyMessage) {
     EXPECT_TRUE(result.empty());
 }
 
-TEST(BittorrentMessageParser, TestParseKeepAliveMessage) {
+TEST(BittorrentMessageParserTest, TestParseKeepAliveMessage) {
     const std::vector<std::byte> rawMessage {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x0)};
 
     const std::vector<BittorrentMessage> result = BittorrentMessageParser::getMessages(rawMessage);
@@ -22,7 +22,7 @@ TEST(BittorrentMessageParser, TestParseKeepAliveMessage) {
     EXPECT_TRUE(result[0].getPayload().empty());
 }
 
-TEST(BittorrentMessageParser, TestParseChokeMessage) {
+TEST(BittorrentMessageParserTest, TestParseChokeMessage) {
     const MessageType messageType = MessageType::CHOKE;
     const std::vector<std::byte> rawMessage {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
                                              static_cast<std::byte>(messageType)};
@@ -34,7 +34,7 @@ TEST(BittorrentMessageParser, TestParseChokeMessage) {
     EXPECT_TRUE(result[0].getPayload().empty());
 }
 
-TEST(BittorrentMessageParser, TestParseMessageWithPayload) {
+TEST(BittorrentMessageParserTest, TestParseMessageWithPayload) {
     const MessageType messageType = MessageType::HAVE;
     const std::vector<std::byte> rawMessage {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x5),
                                              static_cast<std::byte>(messageType),
@@ -54,7 +54,7 @@ TEST(BittorrentMessageParser, TestParseMessageWithPayload) {
     EXPECT_EQ(payload[3], std::byte(0x4));
 }
 
-TEST(BittorrentMessageParser, TestParseFewMessagesWitouthPayload) {
+TEST(BittorrentMessageParserTest, TestParseFewMessagesWitouthPayload) {
     const MessageType firstMessageType = MessageType::CHOKE;
     const MessageType secondMessageType = MessageType::INTERESTED;
     const std::vector<std::byte> firstRawMessage {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x1),
@@ -81,7 +81,7 @@ TEST(BittorrentMessageParser, TestParseFewMessagesWitouthPayload) {
     EXPECT_TRUE(secondMessage.getPayload().empty());
 }
 
-TEST(BittorrentMessageParser, TestParseFewMessagesWithPayload) {
+TEST(BittorrentMessageParserTest, TestParseFewMessagesWithPayload) {
     const MessageType firstMessageType = MessageType::HAVE;
     const MessageType secondMessageType = MessageType::BITFIELD;
     const std::vector<std::byte> firstRawMessage {std::byte(0x0), std::byte(0x0), std::byte(0x0), std::byte(0x5),

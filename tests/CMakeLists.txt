@@ -12,7 +12,11 @@ set(HEADERS
              LoggerTests.hpp
              BencodeTests/BencodeFileTests.hpp
              UtilsTests/HashMethodsTest.hpp
-             UtilsTests/StringOperationsTest.hpp)
+             UtilsTests/StringOperationsTest.hpp
+             BittorrentTests/HandshakeMessageBuilderTests.hpp
+             BittorrentTests/BittorrentMessageBuilderTests.hpp
+             BittorrentTests/BittorrentMessageTests.hpp
+             BittorrentTests/TorrentFileTests.hpp)
 
 set(GTEST_LIB CONAN_PKG::gtest)
 set(GTEST_PATH ${CONAN_INCLUDE_DIRS_GTEST})

@@ -16,7 +16,6 @@ bool Peer::handshake(const std::string &request) {
     if(!m_streamSocket->setReceiveTimeout(std::chrono::milliseconds(2000))) {
         return false;
     }
-    //RAIISocketFlagsManipulator<SOL_SOCKET, SO_SNDTIMEO, timeval> flagsManipulator(m_socket.native_handle(), timeout);
 
     if(m_streamSocket->connect()) {
         if(m_streamSocket->send(request) == request.size()) {
