@@ -11,21 +11,13 @@
 
 #include <format>
 
-/**
- * @param [in] path Path to the file with .torrent extension.
- * @throw WrongPathException If there is a non-existent directory in the filepath.
- * @throw NoSuchFileException If the file does not exist.
- */
 BencodeFile::BencodeFile(std::string const& filepath): m_filepath(filepath) {
     FileReader fileReader(filepath);
     std::string fileData = fileReader.getData();
     m_parser = std::make_unique<BencodeParser>(fileData);
 }
 
-/**
- * @return Sum of file sizes in a torrent file.
- */
-std::string BencodeFile::getTotalBytesLeft() {
+std::string BencodeFile::getTotalBytesLeft() const {
     uint64_t bytesLength = 0;
     StringVector torrentFiles;
 
@@ -46,10 +38,7 @@ std::string BencodeFile::getTotalBytesLeft() {
     return std::to_string(bytesLength);
 }
 
-/**
- * @return Value with "announce" fieldName.
- */
-std::string BencodeFile::getAnnounce() {
+std::string BencodeFile::getAnnounce() const {
     std::string announceString;
     try {
         announceString = m_parser->getValue("announce");
@@ -60,11 +49,7 @@ std::string BencodeFile::getAnnounce() {
     return announceString;
 }
 
-/**
- *
- * @return Array of size 20 and value: std::byte, which means sha1 on data with "info" fieldName.
- */
-TorrentHash BencodeFile::getInfoHash() {
+TorrentHash BencodeFile::getInfoHash() const {
     std::string infoRawData;
     try {
         infoRawData = m_parser->getValue("info");
@@ -76,7 +61,7 @@ TorrentHash BencodeFile::getInfoHash() {
     return result;
 }
 
-std::vector<std::string> BencodeFile::getFiles() {
+std::vector<std::string> BencodeFile::getFiles() const {
     std::vector<std::string> files;
     try {
         files = m_parser->getList("files");

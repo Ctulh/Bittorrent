@@ -1,11 +1,11 @@
-//
-// created by ctuh on 8/12/23.
-//
-
 #pragma once
 
 #include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
+
+/*!
+ * @brief class represents 'piece' message from BitTorrent protocol.
+*/
 
 class Piece: public IBittorrentMessageBuildable<MessageType::PIECE> {
 public:

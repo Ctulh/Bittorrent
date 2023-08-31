@@ -21,6 +21,14 @@
 
 #endif
 
+/*!
+ * @brief This class shouldn't be instantiated, but if this happened it will throw std::runtime_error.
+ *        In the good way full specialization should be called. See tests for clarification.
+ *
+ *        I think this class will allow you to not have to remember every payload for every message type.
+ *        Just write your message type in the template and the IDE will show you what parameters you need to build
+ *        the payload for that message type.
+ */
 template<MessageType>
 class ConverterArgsToPayloadString {
 public:
@@ -29,6 +37,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'KEEP_ALIVE' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::KEEP_ALIVE> {
 public:
@@ -37,6 +48,9 @@ public:
     static std::vector<std::byte> getPayload() {return {};}
 };
 
+/*!
+ * @brief Full specialization for 'CHOKE' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::CHOKE> {
 public:
@@ -45,6 +59,9 @@ public:
     static std::vector<std::byte> getPayload() {return {};}
 };
 
+/*!
+ * @brief Full specialization for 'UNCHOKE' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::UNCHOKE> {
 public:
@@ -53,6 +70,9 @@ public:
     static std::vector<std::byte> getPayload() {return {};}
 };
 
+/*!
+ * @brief Full specialization for 'INTERESTED' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::INTERESTED> {
 public:
@@ -61,6 +81,9 @@ public:
     static std::vector<std::byte> getPayload() {return {};}
 };
 
+/*!
+ * @brief Full specialization for 'NOT_INTERESTED' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::NOT_INTERESTED> {
 public:
@@ -69,6 +92,9 @@ public:
     static std::vector<std::byte> getPayload() {return {};}
 };
 
+/*!
+ * @brief Full specialization for 'HAVE' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::HAVE> {
 public:
@@ -79,6 +105,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'BITFIELD' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::BITFIELD> {
 public:
@@ -89,6 +118,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'REQUEST' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::REQUEST> {
 public:
@@ -109,6 +141,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'PIECE' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::PIECE> {
 public:
@@ -126,6 +161,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'CANCEL' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::CANCEL> {
 public:
@@ -146,6 +184,9 @@ public:
     }
 };
 
+/*!
+ * @brief Full specialization for 'PORT' MessageType
+*/
 template<>
 class ConverterArgsToPayloadString<MessageType::PORT> {
 public:

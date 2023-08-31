@@ -15,7 +15,9 @@ set(SOURCES
             BitTorrentIdentity.cpp
             BittorrentMessages/BittorrentMessageBuilder.cpp
             BittorrentMessages/BittorrentMessage.cpp
-            BittorrentMessages/HandshakeMessageBuilder.cpp)
+            BittorrentMessages/HandshakeMessageBuilder.cpp
+            BittorrentMessages/BitTorrentMessageParser.cpp
+            TrackerResponse.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

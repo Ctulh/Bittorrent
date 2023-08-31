@@ -1,7 +1,3 @@
-//
-// Created by ctuh on 7/28/23.
-//
-
 #pragma once
 
 #include <unordered_map>
@@ -11,6 +7,10 @@
 #include "Bencode/BencodeParser.hpp"
 #include "Logger/Logger.hpp"
 
+/*!
+ * @brief CRTP class. Means that T must override 'getFieldsToFill' method which will return vector of fieldNames that will parser from 'bencodeData'
+ *        and saved to map 'm_bencodeValues'.
+ */
 template <typename T>
 class CanBeBuiltFromBencodeData {
 private:

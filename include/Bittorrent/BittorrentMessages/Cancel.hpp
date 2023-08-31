@@ -1,11 +1,11 @@
-//
-// Created by ctuh on 8/12/23.
-//
-
 #pragma once
 
 #include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
+
+/*!
+ * @brief class represents 'cancel' message from BitTorrent protocol.
+*/
 
 class Cancel: public IBittorrentMessageBuildable<MessageType::CANCEL> {
 public:

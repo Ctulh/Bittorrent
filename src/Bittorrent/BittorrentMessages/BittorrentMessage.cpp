@@ -2,6 +2,14 @@
 
 #include <sstream>
 
+BittorrentMessage::BittorrentMessage(MessageType messageType, std::vector<std::byte> const& payload):
+                                                                                        m_payload(payload),
+                                                                                        m_messageType(messageType) {}
+
+BittorrentMessage::BittorrentMessage(MessageType messageType): m_messageType(messageType) {}
+
+BittorrentMessage::BittorrentMessage(): m_messageType(MessageType::KEEP_ALIVE) {}
+
 std::vector<std::byte> BittorrentMessage::getPayload() const {
     return m_payload;
 }

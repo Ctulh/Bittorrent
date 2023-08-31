@@ -1,7 +1,3 @@
-//
-// created by ctuh on 8/12/23.
-//
-
 #pragma once
 
 #include "BittorrentMessageType.hpp"

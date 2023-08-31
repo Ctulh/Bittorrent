@@ -1,8 +1,8 @@
-//
-// Created by ctuh on 8/22/23.
-//
-
 #pragma once
+
+/*!
+ * @brief statuses of the file downloaded by the BitTorrent protocol.
+ */
 
 enum class TorrentFileStatus {
     NotDownloaded = 0,

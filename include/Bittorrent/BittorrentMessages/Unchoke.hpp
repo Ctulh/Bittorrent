@@ -1,11 +1,11 @@
-//
-// created by ctuh on 8/12/23.
-//
-
 #pragma once
 
 #include "IBittorrentMessageBuildable.hpp"
 #include "ConverterArgsToPayloadString.hpp"
+
+/*!
+ * @brief class represents 'choke' message from BitTorrent protocol.
+*/
 
 class Unchoke: public IBittorrentMessageBuildable<MessageType::UNCHOKE> {
 public:

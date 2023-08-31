@@ -6,6 +6,10 @@
 
 #include <cinttypes>
 
+/*!
+ * @brief Message types between peer and client, according to the BitTorrent protocol.
+ */
+
 enum class MessageType {
     CHOKE = 0,
     UNCHOKE = 1,

@@ -63,7 +63,7 @@ HandshakeMessageBuilder& HandshakeMessageBuilder::setPeerId(std::string const& p
     else if(peerId.size() < peerIdLength()) {
         auto peerIdExtended = peerId;
         while (peerIdExtended.size() < peerIdLength()) {
-            peerIdExtended.push_back(m_extender);
+            peerIdExtended.push_back(extender());
         }
         Logger::logWarning(std::format(
                 "Got 'peerId' string shorter than expected in HandshakeMessageBuilder. Got: {}, will be extended into: {}",
@@ -79,7 +79,7 @@ HandshakeMessageBuilder& HandshakeMessageBuilder::setPeerId(std::string const& p
 std::string HandshakeMessageBuilder::getMessage() const {
     std::string message;
     message.push_back(0x13);
-    message += protocolStr;
+    message += protocolStr();
     message += m_reservedBytes;
     message += m_infoHash;
     message += m_peerId;
@@ -96,4 +96,12 @@ std::size_t HandshakeMessageBuilder::peerIdLength() {
 
 std::size_t HandshakeMessageBuilder::reservedLength() {
     return 8;
+}
+
+std::string HandshakeMessageBuilder::protocolStr() {
+    return "BitTorrent protocol";
+}
+
+char HandshakeMessageBuilder::extender() {
+    return '-';
 }

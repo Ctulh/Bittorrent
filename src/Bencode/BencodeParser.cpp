@@ -6,20 +6,36 @@
 #include "BencodeParser.hpp"
 #include "Exceptions/NoSuchFieldException.hpp"
 #include "StringMethods.hpp"
-#include <stack>
 #include <numeric>
 #include <algorithm>
 #include <stdint.h>
 
-
 BencodeParser::BencodeParser(std::string const& bencodeData): m_bencodeData(bencodeData) {}
 
-/**
- * @brief overload of operator [].
- * @param [in] fieldName - the field name of the string whose value you want to get.
- * @return string value of the field.
- * @throw NoSuchFieldException If in m_bencodeData no such fieldName.
- */
+char BencodeParser::listSeparator() {
+    return ',';
+}
+
+constexpr char BencodeParser::listIdentifier() {
+    return 'l';
+}
+
+constexpr char BencodeParser::numberIdentifier() {
+    return 'i';
+}
+
+constexpr char BencodeParser::stringIdentifier() {
+    return 's';
+}
+
+constexpr char BencodeParser::dictionaryIdentifier() {
+    return 'd';
+}
+
+constexpr char BencodeParser::endIdentifier() {
+    return 'e';
+}
+
 std::string BencodeParser::operator[](const std::string &fieldName) {
     if(m_fieldValues.count(fieldName) == 1) {
         if(m_fieldValues[fieldName].has_value())
@@ -35,17 +51,17 @@ std::string BencodeParser::operator[](const std::string &fieldName) {
     it += fieldName.size();
     std::string fieldValue;
 
-    if(m_bencodeData[it] == 'i') { // 'i' means integer value
+    if(isSame<numberIdentifier()>(m_bencodeData[it])) {
         fieldValue = readNumber(it);
-    } else if(m_bencodeData[it] == 'd') { // 'd' means dictionary value
+    } else if(isSame<dictionaryIdentifier()>(m_bencodeData[it])) {
        fieldValue = readDictionary(it);
-    } else if(m_bencodeData[it] == 'l') { // 'l' means list value
+    } else if(isSame<listIdentifier()>(m_bencodeData[it])) {
         StringVector strings = readList(it);
         fieldValue = std::accumulate(strings.begin(), strings.end(), std::string(),
                                                         [this](std::string const& left, std::string const& right) {
                                                             if(left.empty())
                                                                 return right;
-                                                            return left + this->m_listSeparator + right;
+                                                            return left + listSeparator() + right;
                                                         });
     } else if(std::isdigit(m_bencodeData[it])) { // no 'i', 'l', 'd' after field name means that this is string
         fieldValue = readString(it);
@@ -55,28 +71,14 @@ std::string BencodeParser::operator[](const std::string &fieldName) {
     return fieldValue;
 }
 
-/**
- * @brief do same as overload of operator [].
- * @param [in] fieldName - the field name of the string whose value you want to get.
- * @return string value of the field or throws NoSuchFieldException.
- * @throw NoSuchFieldException If in m_bencodeData no such fieldName.
- */
 std::string BencodeParser::getValue(const std::string &fieldName) {
     return this->operator[](fieldName);
 }
 
-/*!
- * @brief Method for getting list value in bencode data.
- * @param [in] fieldName - the field name of the string whose value you want to get.
- * @return A vector of strings that represent the elements of a list. If fieldName is not a list will return vector with single string.
- * @throw NoSuchFieldException If in m_bencodeData no such fieldName.
- */
 StringVector BencodeParser::getList(const std::string &fieldName) {
-    const char separator = ',';
-
     if(m_fieldValues.count(fieldName) == 1) {
         if(m_fieldValues[fieldName].has_value())
-            return StringMethods::split(m_fieldValues[fieldName].value(), separator);
+            return StringMethods::split(m_fieldValues[fieldName].value(), listSeparator());
         else
             throw NoSuchFieldException(fieldName);
     }
@@ -92,7 +94,7 @@ StringVector BencodeParser::getList(const std::string &fieldName) {
                                  [this](std::string const& left, std::string const& right) {
                                      if(left.empty())
                                          return right;
-                                     return left + this->m_listSeparator + right;
+                                     return left + listSeparator() + right;
                                  });
     m_fieldValues[fieldName] = fieldValue;
     return strings;
@@ -106,38 +108,39 @@ StringVector BencodeParser::readList(std::size_t& index) const {
 
     int carry = 0;
 
-    if(m_bencodeData[index] == 'l')
+    if(isSame<listIdentifier()>(m_bencodeData[index]))
         ++index;
 
     ++carry;
 
     char listElementType;
     if(index < dataSize) {
-        if(m_bencodeData[index] == 'd')
-            listElementType = 'd';
-        else if(m_bencodeData[index] == 'l')
-            listElementType = 'l';
-        else if(m_bencodeData[index] == 'i')
-            listElementType = 'i';
-        else
-            listElementType = 's';
+        if(isSame<dictionaryIdentifier()>(m_bencodeData[index]) ||
+           isSame<listIdentifier()>(m_bencodeData[index])       ||
+           isSame<numberIdentifier()>(m_bencodeData[index]))  {
+            listElementType = m_bencodeData[index];
+        }
+        else {
+            listElementType = stringIdentifier();
+        }
     }
+
     StringVector output;
-    while(index < dataSize &&carry != 0) {
-        if(listElementType == 'd') {
+    while(index < dataSize && carry != 0) {
+        if(isSame<dictionaryIdentifier()>(listElementType)) {
             output.push_back(readDictionary(index));
         }
-        else if(listElementType == 'i') {
+        else if(isSame<numberIdentifier()>(listElementType)) {
             output.push_back(readNumber(index));
         }
-        else if(listElementType == 's') {
+        else if(isSame<stringIdentifier()>(listElementType)) {
             output.push_back(readString(index));
         }
-        if(index < dataSize && m_bencodeData[index] == 'e') {
+        if(index < dataSize && isSame<endIdentifier()>(m_bencodeData[index])) {
             --carry;
             ++index;
         }
-        if(index < dataSize && m_bencodeData[index] == 'l') {
+        if(index < dataSize && isSame<listIdentifier()>(m_bencodeData[index])) {
             ++carry;
             ++index;
         }
@@ -150,7 +153,7 @@ std::string BencodeParser::readString(std::size_t& index) const {
     const std::size_t dataSize = m_bencodeData.size();
 
     if(index >= dataSize)
-        return "";
+        return {};
 
     if(m_bencodeData[index] == ':')
         ++index;
@@ -165,7 +168,7 @@ std::string BencodeParser::readString(std::size_t& index) const {
     index += numberOfBytesInFieldValue;
 
     std::string result =  m_bencodeData.substr(begin, index - begin + 1);
-    ++index; // because string don't have end symbol in bencode so we should increment index to go to another sequence
+    ++index; // because string don't have end symbol in bencode, so we should increment index to go to another sequence
     return result;
 }
 
@@ -174,7 +177,7 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
     int carry = 1;
 
     std::size_t begin = index;
-    if(index < dataSize && m_bencodeData[index] == 'd')
+    if(index < dataSize && isSame<dictionaryIdentifier()>(m_bencodeData[index]))
         ++index;
 
     while(carry != 0 && index < dataSize) {
@@ -188,17 +191,17 @@ std::string BencodeParser::readDictionary(std::size_t& index) const {
 
        index += dataLengthInBytes;
        if(index < dataSize) {
-           if(m_bencodeData[index] == 'd') {
+           if(isSame<dictionaryIdentifier()>(m_bencodeData[index])) {
                ++carry;
                ++index;
            }
-           else if(m_bencodeData[index] == 'i') {
+           else if(isSame<numberIdentifier()>(m_bencodeData[index])) {
                readNumber(index);
            }
-           else if(m_bencodeData[index] == 'l') {
+           else if(isSame<listIdentifier()>(m_bencodeData[index])) {
                readList(index);
            }
-           while (carry != 0 && index < dataSize && m_bencodeData[index] == 'e') {
+           while (carry != 0 && index < dataSize && isSame<endIdentifier()>(m_bencodeData[index])) {
                --carry;
                ++index;
            }
@@ -216,10 +219,10 @@ std::string BencodeParser::readNumber(std::size_t& index) const {
 
     if(index >= dataSize)
         return "";
-    if(m_bencodeData[index] == 'i')
+    if(isSame<numberIdentifier()>(m_bencodeData[index]))
         ++index;
     std::string result;
-    while(index < dataSize && m_bencodeData[index] != 'e') {
+    while(index < dataSize && !isSame<endIdentifier()>(m_bencodeData[index])) {
         result += m_bencodeData[index];
         ++index;
     }

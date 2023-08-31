@@ -6,6 +6,10 @@
 
 #include <string>
 
+/*!
+ * @brief сlass contains information about the remote peer
+ */
+
 class PeerInfo {
 public:
     PeerInfo(std::string const& address, unsigned short port);
