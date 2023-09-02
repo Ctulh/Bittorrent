@@ -18,6 +18,7 @@ public:
  * @param fileOffset - sum of files size before this file
 */
     TorrentFile(std::string const& filePath, std::size_t size, std::size_t fileOffset = 0);
+    TorrentFile(TorrentFile&& torrentFile)  noexcept = default;
     ~TorrentFile();
 
 public:

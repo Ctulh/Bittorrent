@@ -17,9 +17,11 @@ set(SOURCES
             BittorrentMessages/BittorrentMessage.cpp
             BittorrentMessages/HandshakeMessageBuilder.cpp
             BittorrentMessages/BitTorrentMessageParser.cpp
-            TrackerResponse.cpp)
+            BittorrentMessages/BitfieldReader.cpp
+            TrackerResponse.cpp
+            Torrent.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
 target_include_directories(${LIB_NAME} PUBLIC ${HEADERS_PATH} ${INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/third_party/InetLib/include/)
-target_link_libraries(${LIB_NAME} PRIVATE BencodeParser FileReader Logger InetLib)
+target_link_libraries(${LIB_NAME} PRIVATE BencodeParser FileReader Logger InetLib Inet)
