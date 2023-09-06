@@ -5,6 +5,7 @@
 #include "Peer.hpp"
 #include "Logger/Logger.hpp"
 #include "Inet/Socket.hpp"
+#include <algorithm>
 
 Peer::Peer(PeerInfo const& peerInfo):   m_peerInfo(peerInfo) {
     m_streamSocket = std::make_shared<StreamSocket>(InetAddress(m_peerInfo.getAddress(), m_peerInfo.getPort()));
@@ -32,4 +33,10 @@ bool Peer::handshake(const std::string &request) {
     return false;
 }
 
+void Peer::addPieces(const std::vector<std::size_t> &pieces) {
+    std::copy(pieces.begin(), pieces.end(), std::inserter(m_pieces, m_pieces.end()));;
+}
 
+bool Peer::hasPiece(std::size_t piece) const {
+    return m_pieces.contains(piece);
+}

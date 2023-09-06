@@ -23,6 +23,7 @@
 #include <chrono>
 
 #include "Bittorrent/Peer.hpp"
+#include "Bittorrent/Torrent.hpp"
 
 std::size_t connectedPeers = 0;
 std::size_t totalPeers = 0;
@@ -38,72 +39,11 @@ int main() {
 
     boost::asio::io_context context;
     Logger::addLogger("spdLogger", std::make_shared<LoggerSpdlog>("spdLogger", "logs.txt"));
-    BencodeFile torrentFile("/home/ctuh/Downloads/3.torrent");
-
-    auto files = torrentFile.getFiles();
-    for(auto file: files) {
-        std::cout << file << std::endl;
-    }
-
-    std::string announce = torrentFile.getAnnounce();
-    auto request = RequestBuilder::buildTrackerRequest(torrentFile, UrlMethods::getDomainName(announce));
-    auto response = RequestSender::sendRequest<TrackerResponse>(request, UrlMethods::getDomainName(announce), "80");
-
-    auto torrentHash = torrentFile.getInfoHash();
-    std::string infoHash;
-    for(auto hashEl: torrentHash) {
-        infoHash.push_back(static_cast<char>(hashEl));
-    }
-
-    HandshakeMessageBuilder builder;
-    builder.setInfoHash(infoHash);
+   // BencodeFile torrentFile("/home/ctuh/Downloads/test2.torrent");
 
 
-    std::string reqStr = builder.getMessage();
+    Torrent torrent("/home/ctuh/Downloads/test2.torrent");
+    torrent.run();
 
-
-    auto peerInfos = response.getPeers();
-    totalPeers = peerInfos.size();
-
-    std::vector<std::shared_ptr<Peer>> peers;
-    for(auto& peerInfo: peerInfos) {
-        peers.push_back(std::make_shared<Peer>(peerInfo));
-    }
-
-    SocketPoller poller(10, 10000);
-
-    auto callback = [](std::vector<std::byte> const& message, StreamSocketPtr streamSocket) {
-        auto inetAddr = streamSocket->getInetAddress();
-        try {
-            Logger::logInfo(std::format("Got message on {}:{}", inetAddr.getHost(), inetAddr.getPort()));
-            auto messages = BittorrentMessageParser::getMessages(message);
-            for(auto message: messages) {
-                std::cout << message << std::endl;
-            }
-        }
-        catch(std::exception& e) {
-            std::cout << e.what();
-        }
-    };
-
-    poller.setReceiveMessageCallback(callback);
-
-    std::thread t1([&poller]() {
-        while(true) {
-            poller.poll();
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-    });
-
-    for(auto& peer: peers) {
-        if(peer->handshake(reqStr)) {
-            auto socket = peer->getSocket();
-            Interested interested;
-            socket->send(interested.getMessage());
-            poller.add(socket);
-        }
-    }
-
-    t1.join();
 }
 

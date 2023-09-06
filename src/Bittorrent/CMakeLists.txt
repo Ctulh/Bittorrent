@@ -18,6 +18,7 @@ set(SOURCES
             BittorrentMessages/HandshakeMessageBuilder.cpp
             BittorrentMessages/BitTorrentMessageParser.cpp
             BittorrentMessages/BitfieldReader.cpp
+            BittorrentMessages/BitTorrentMessageTypeConverter.cpp
             TrackerResponse.cpp
             Torrent.cpp)
 

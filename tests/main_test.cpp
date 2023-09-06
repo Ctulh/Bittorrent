@@ -17,6 +17,7 @@
 #include "BittorrentTests/BittorrentMessageBuilderTests.hpp"
 #include "BittorrentTests/BittorrentMessageParserTests.hpp"
 #include "BittorrentTests/HandshakeMessageBuilderTests.hpp"
+#include "BittorrentTests/BitfieldReaderTest.hpp"
 
 
 int main(int argc, char** argv) {
