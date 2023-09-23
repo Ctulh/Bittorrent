@@ -51,3 +51,7 @@ std::size_t TorrentFile::getBytesLeft() const {
 std::size_t TorrentFile::getGlobalOffset() const {
     return m_fileOffset + m_bytesDownloaded;
 }
+
+std::size_t TorrentFile::getNextBlock() const {
+    return m_fileOffset + m_bytesDownloaded;
+}

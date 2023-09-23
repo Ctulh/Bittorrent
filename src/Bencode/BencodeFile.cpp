@@ -73,4 +73,6 @@ std::vector<std::string> BencodeFile::getFiles() const {
     return files;
 }
 
-
+std::string BencodeFile::getPieceLength() const {
+    return m_parser->getValue("piece length");
+}

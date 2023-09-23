@@ -15,3 +15,8 @@ bool Timer::isExpired() const {
 void Timer::reset() {
     m_expirationTime = std::chrono::system_clock::now() + m_timeout;
 }
+
+void Timer::changeTimeout(std::chrono::milliseconds timeout) {
+    m_timeout = timeout;
+    m_expirationTime = std::chrono::system_clock::now() + m_timeout;
+}

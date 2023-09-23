@@ -42,6 +42,8 @@ public:
  */
     [[nodiscard]] std::vector<std::string> getFiles() const;
 
+
+    std::string getPieceLength() const;
 private:
     std::unique_ptr<BencodeParser> m_parser;
     std::string m_filepath;

@@ -9,8 +9,8 @@
 #include <cinttypes>
 
 #include "Bencode/CanBeBuiltFromBencodeData.hpp"
-#include "PeerInfo.hpp"
 #include "Logger/Logger.hpp"
+#include "Bittorrent/Peer.hpp"
 #include <boost/lexical_cast.hpp>
 
 /*!
@@ -33,9 +33,11 @@ public:
 /*!
  * @return vector of peers.
 */
-    std::vector<PeerInfo> getPeers();
+    std::vector<Peer> getPeers();
 
-public:
+    std::uint32_t getInterval();
+
+private:
     std::uint32_t m_interval = 0;
     std::string m_peers;
 

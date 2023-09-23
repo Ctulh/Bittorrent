@@ -5,21 +5,20 @@ set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(HEADERS_PATH ${PROJECT_SOURCE_DIR}/include/Bittorrent)
 
 set(HEADERS
-            ${HEADERS_PATH}/PeerInfo.hpp
-            ${HEADERS_PATH}/Peer.hpp)
+        ${HEADERS_PATH}/Peer.hpp)
 
 set(SOURCES
-            PeerInfo.cpp
-            Peer.cpp
-            TorrentFile.cpp
-            BitTorrentIdentity.cpp
-            BittorrentMessages/BittorrentMessageBuilder.cpp
-            BittorrentMessages/BittorrentMessage.cpp
-            BittorrentMessages/HandshakeMessageBuilder.cpp
-            BittorrentMessages/BitTorrentMessageParser.cpp
-            BittorrentMessages/BitfieldReader.cpp
-            TrackerResponse.cpp
-            Torrent.cpp)
+        Peer.cpp
+        TorrentFile.cpp
+        BitTorrentIdentity.cpp
+        BittorrentMessages/BittorrentMessageBuilder.cpp
+        BittorrentMessages/BittorrentMessage.cpp
+        BittorrentMessages/HandshakeMessageBuilder.cpp
+        BittorrentMessages/BitTorrentMessageParser.cpp
+        BittorrentMessages/BitfieldReader.cpp
+        BittorrentMessages/BitTorrentMessageTypeConverter.cpp
+        TrackerResponse.cpp
+        Torrent.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

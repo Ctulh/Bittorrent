@@ -58,6 +58,8 @@ public:
  */
     std::size_t getGlobalOffset() const;
 
+    std::size_t getNextBlock() const;
+
 private:
     std::ofstream m_fileStream;
     mutable TorrentFileStatus m_fileStatus;
