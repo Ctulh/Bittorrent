@@ -18,6 +18,7 @@ struct Task {
 class Torrent {
 public:
     Torrent(std::string const& filepath);
+    ~Torrent();
 public:
     void run();
     void stop();
@@ -44,8 +45,10 @@ private:
     std::string createHandshakeMessage() const;
     void setTimerTimeout(std::uint32_t timeout);
     void produceTasks();
+    void addFilePieceToQueue(TorrentFile const& file);
 
 private:
+    std::unique_ptr<std::thread> m_producerThread;
     std::unique_ptr<Timer> m_timer;
     std::queue<Task> m_taskQueue;
     std::atomic_flag m_isRunning;

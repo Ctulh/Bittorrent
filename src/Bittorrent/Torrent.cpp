@@ -23,11 +23,31 @@ Torrent::Torrent(const std::string &filepath): m_torrentFilePath(filepath),
     });
 }
 
+void Torrent::addFilePieceToQueue(TorrentFile const& file) {
+    Task task(file.getNextBlock(), 0);
+    m_taskQueue.push(task); //TODO need to be piece
+}
+
+Torrent::~Torrent() {
+    if(m_producerThread && m_producerThread->joinable()) {
+        m_producerThread->join();
+    }
+}
+
 void Torrent::produceTasks() {
-    bool hasIncompleteFile = true;
+    bool hasIncompleteFile = false;
 
-    while(hasIncompleteFile) {
+    for(auto const& file: m_files) {
+        if(file.getStatus() != TorrentFileStatus::Complete) {
+            addFilePieceToQueue(file);
+            if(not hasIncompleteFile)
+                hasIncompleteFile = true;
+        }
+    }
 
+    if(!hasIncompleteFile) {
+        Logger::logInfo(std::format("Torrent downloaded"));
+        m_isRunning.clear();
     }
 }
 
@@ -47,37 +67,15 @@ void Torrent::run() {
             m_taskQueue.push(std::move(task));
         }
 
-        while(!m_taskQueue.empty()) {
-            auto task = m_taskQueue.front();
-            m_taskQueue.pop();
 
-            for(auto&& [host, peer]: m_hostToPeer) {
-                if(peer.getStatus() == PeerStatus::Choked) {
-
-                }
-            }
-
-        }
     }
 
-    while(m_isRunning.test()) {
-        auto& file = m_files[0];
-        auto nextPiece = file.getNextBlock();
+    m_producerThread = std::make_unique<std::thread>([this]() {
+       while(m_isRunning.test()) {
+           produceTasks();
+       }
+    });
 
-        Request request(nextPiece, 0);
-
-        for(auto&& [host, peer]: m_hostToPeer) {
-            if(peer.hasPiece(nextPiece)) {
-                peer.getSocket()->send(request.getMessage());
-            }
-        }
-        m_poller->poll();
-        int number;
-        std::cin >> number;
-        if(number != 1) {
-            exit(0);
-        }
-    }
 }
 
 void Torrent::stop() {
