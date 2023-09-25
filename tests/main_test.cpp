@@ -9,7 +9,6 @@
 #include "UtilsTests/HashMethodsTest.hpp"
 #include "UtilsTests/UrlMethodsTest.hpp"
 #include "UtilsTests/ByteMethodsTest.hpp"
-#include "UtilsTests/TimerTests.hpp"
 #include "FileReaderTests.hpp"
 #include "LoggerTests.hpp"
 #include "BencodeTests/BencodeFileTests.hpp"
@@ -18,7 +17,9 @@
 #include "BittorrentTests/BittorrentMessageBuilderTests.hpp"
 #include "BittorrentTests/BittorrentMessageParserTests.hpp"
 #include "BittorrentTests/HandshakeMessageBuilderTests.hpp"
+#include "BittorrentTests/MessageHandlerTests.hpp"
 
+// #include "UtilsTests/TimerTests.hpp"  // Takes long time to test
 
 int main(int argc, char** argv) {
     using testing::InitGoogleTest;

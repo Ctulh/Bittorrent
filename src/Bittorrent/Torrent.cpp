@@ -16,7 +16,6 @@
 #include "Bittorrent/BittorrentMessages/BitfieldReader.hpp"
 
 Torrent::Torrent(const std::string &filepath): m_torrentFilePath(filepath),
-                                               m_isFileInited(false),
                                                m_poller(std::make_unique<SocketPoller>(10,10000)) {
     m_poller->setReceiveMessageCallback([this](std::vector<std::byte> const& rawMessage, StreamSocketPtr streamSocket) {
         this->handle(rawMessage, streamSocket);
@@ -143,7 +142,7 @@ bool Torrent::initPeers() {
 }
 
 bool Torrent::initFiles() {
-    if(m_isFileInited)
+    if(!m_files.empty())
         return true;
     try {
         BencodeFile bencodeFile(m_torrentFilePath);
@@ -165,31 +164,17 @@ bool Torrent::initFiles() {
         Logger::logError(std::format("Error in Torrent::initFiles() for file: {} Error: {}", m_torrentFilePath, e.what()));
         return false;
     }
-    m_isFileInited = true;
     return true;
 }
 
 void Torrent::handle(const std::vector<std::byte> &rawMessage, StreamSocketPtr streamSocket) {
-    auto addr = streamSocket->getInetAddress();
     auto messages = BittorrentMessageParser::getMessages(rawMessage);
     if(messages.empty())
         return;
 
     for(auto& message: messages) {
         Logger::logInfo(std::format("handle {} - {}", BitTorrentMessageTypeConverter::messageTypeToString(static_cast<MessageType>(message.getMessageType())), streamSocket->getInetAddress().getHost()));
-        switch (message.getMessageType()) {
-            case MessageType::BITFIELD:
-                bitfieldHandle(message, streamSocket);
-                break;
-            case MessageType::HAVE:
-                haveHandle(message, streamSocket);
-                break;
-            case MessageType::PIECE:
-                pieceHandle(message, streamSocket);
-                break;
-            default:
-                break;
-        }
+     //   m_handler.handle(message.getMessageType(), str);
     }
 }
 

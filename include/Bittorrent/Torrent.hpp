@@ -48,12 +48,12 @@ private:
     void addFilePieceToQueue(TorrentFile const& file);
 
 private:
+    std::string m_torrentName;
     std::unique_ptr<std::thread> m_producerThread;
     std::unique_ptr<Timer> m_timer;
     std::queue<Task> m_taskQueue;
     std::atomic_flag m_isRunning;
     std::size_t m_pieceLength;
-    bool m_isFileInited;
     std::string m_torrentFilePath;
     std::unordered_map<std::string, Peer> m_hostToPeer;
     std::unique_ptr<SocketPoller> m_poller;

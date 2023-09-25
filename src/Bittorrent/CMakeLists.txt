@@ -18,7 +18,8 @@ set(SOURCES
         BittorrentMessages/BitfieldReader.cpp
         BittorrentMessages/BitTorrentMessageTypeConverter.cpp
         TrackerResponse.cpp
-        Torrent.cpp)
+        Torrent.cpp
+        MessageHandler.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
