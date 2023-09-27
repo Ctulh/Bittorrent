@@ -11,7 +11,7 @@ Peer Peer::fromAddressAndPort(const std::string &address, unsigned short port) {
     return Peer(address, port);
 }
 
-Peer::Peer(std::string const& address, unsigned short port) {
+Peer::Peer(std::string const& address, unsigned short port): m_status(PeerStatus::NONE), m_address(address), m_port(port) {
     m_streamSocket = std::make_shared<StreamSocket>(InetAddress(address, port));
 }
 
@@ -43,6 +43,10 @@ void Peer::addPieces(const std::vector<std::size_t> &pieces) {
 
 bool Peer::hasPiece(std::size_t piece) const {
     return m_pieces.contains(piece);
+}
+
+void Peer::setStatus(PeerStatus status) {
+    m_status = status;
 }
 
 StreamSocketPtr Peer::getSocket() const {

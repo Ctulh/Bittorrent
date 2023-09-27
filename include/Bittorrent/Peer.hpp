@@ -29,6 +29,7 @@ public:
     void addPieces(std::vector<std::size_t> const& pieces);
     bool hasPiece(std::size_t piece) const;
 
+    void setStatus(PeerStatus status);
     PeerStatus getStatus() const;
     std::string getAddress() const;
     unsigned short getPort() const;

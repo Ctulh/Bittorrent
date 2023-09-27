@@ -9,9 +9,10 @@
 #include <queue>
 #include "TrackerResponse.hpp"
 #include "Utils/Timer.hpp"
+#include "MessageHandler.hpp"
 
 struct Task {
-    unsigned long block;
+    unsigned long piece;
     int begin;
 };
 
@@ -28,27 +29,33 @@ private:
 
 
 private:
-    void handle(std::vector<std::byte> const& message, StreamSocketPtr streamSocket);
 
-    //  void keepAliveHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-//    void chokeHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-//    void unchokeHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-//    void interestedHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-//    void notInterestedHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-    void haveHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-    void bitfieldHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-    //  void requestHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
-    void pieceHandle(BittorrentMessage const& message, StreamSocketPtr streamSocket);
     TrackerResponse sendTrackerRequest() const;
     void addPeerIfConfirmHandshake(std::vector<Peer> const& peers, std::string const& handshakeMessage);
     std::string getInfoHash() const;
     std::string createHandshakeMessage() const;
     void setTimerTimeout(std::uint32_t timeout);
     void produceTasks();
+    void consumeTasks();
     void addFilePieceToQueue(TorrentFile const& file);
+
+    void handle(std::string const& host, std::vector<std::byte> const& message);
+    void chokeHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void unchokeHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void interestedHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void notInterestedHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void haveHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void bitfieldHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void requestHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void pieceHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void cancelHandle(std::string const& host, std::vector<std::byte> const& payload);
+    void portHandle(std::string const& host, std::vector<std::byte> const& payload);
+
 
 private:
     std::string m_torrentName;
+    std::unique_ptr<MessageHandler> m_messageHandler;
+    std::unique_ptr<std::thread> m_consumerThread;
     std::unique_ptr<std::thread> m_producerThread;
     std::unique_ptr<Timer> m_timer;
     std::queue<Task> m_taskQueue;

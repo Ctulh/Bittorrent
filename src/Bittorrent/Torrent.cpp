@@ -14,23 +14,43 @@
 #include "Bittorrent/BittorrentMessages/Request.hpp"
 #include "Bittorrent/BittorrentMessages/BitTorrentMessageTypeConverter.hpp"
 #include "Bittorrent/BittorrentMessages/BitfieldReader.hpp"
+#include "BittorrentMessages/BitfieldReader.hpp"
 
-Torrent::Torrent(const std::string &filepath): m_torrentFilePath(filepath),
+Torrent::Torrent(const std::string &filepath): m_messageHandler(std::make_unique<MessageHandler>()),
+                                               m_torrentFilePath(filepath),
                                                m_poller(std::make_unique<SocketPoller>(10,10000)) {
-    m_poller->setReceiveMessageCallback([this](std::vector<std::byte> const& rawMessage, StreamSocketPtr streamSocket) {
-        this->handle(rawMessage, streamSocket);
+    m_poller->setReceiveMessageCallback([this](InetAddress const& address,std::vector<std::byte> const& rawMessage) {
+        this->handle(address.getHost(), rawMessage);
+    });
+
+    m_messageHandler->setHandler(MessageType::BITFIELD, [this](std::string const& host, std::vector<std::byte> const& rawMessage) {
+        bitfieldHandle(host, rawMessage);
+    });
+    m_messageHandler->setHandler(MessageType::UNCHOKE, [this](std::string const& host, std::vector<std::byte> const& rawMessage) {
+        unchokeHandle(host, rawMessage);
+    });
+    m_messageHandler->setHandler(MessageType::HAVE, [this](std::string const& host, std::vector<std::byte> const& rawMessage) {
+        haveHandle(host, rawMessage);
+    });
+    m_messageHandler->setHandler(MessageType::CHOKE, [this](std::string const& host, std::vector<std::byte> const& rawMessage) {
+        chokeHandle(host, rawMessage);
     });
 }
 
 void Torrent::addFilePieceToQueue(TorrentFile const& file) {
-    Task task(file.getNextBlock(), 0);
-    m_taskQueue.push(task); //TODO need to be piece
+    auto index = (file.getGlobalOffset() + file.getBytesDownloaded()) / m_pieceLength;
+    Task task(index, file.getNextBlock());
+    m_taskQueue.push(task);
 }
 
 Torrent::~Torrent() {
     if(m_producerThread && m_producerThread->joinable()) {
         m_producerThread->join();
     }
+    if(m_consumerThread && m_consumerThread->joinable()) {
+        m_consumerThread->join();
+    }
+
 }
 
 void Torrent::produceTasks() {
@@ -48,33 +68,52 @@ void Torrent::produceTasks() {
         Logger::logInfo(std::format("Torrent downloaded"));
         m_isRunning.clear();
     }
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+}
+
+void Torrent::consumeTasks() {
+    if(m_taskQueue.empty())
+        return;
+    auto task = m_taskQueue.front();
+    m_taskQueue.pop();
+
+    for(auto&& [host, peer]: m_hostToPeer) {
+        if(peer.hasPiece(task.piece)) {
+            if(peer.getStatus() == PeerStatus::NONE) {
+                Interested interested;
+                peer.getSocket()->send(interested.getMessage());
+                continue;
+            } else if(peer.getStatus() == PeerStatus::Unchoked) {
+                Request request(task.piece, task.begin);
+                peer.getSocket()->send(request.getMessage());
+                return;
+            }
+        }
+    }
+
 }
 
 void Torrent::run() {
     m_isRunning.test_and_set();
     if(!initFiles())
         return;
-
-    while(m_isRunning.test()) {
-        initPeers();
-        std::thread producerThread;
-        std::thread consumerThread;
-        for(auto& file: m_files) {
-            if(file.getStatus() == TorrentFileStatus::Complete)
-                continue;
-            Task task{.block = file.getNextBlock(), .begin = 0};
-            m_taskQueue.push(std::move(task));
-        }
-
-
-    }
-
+    if(!initPeers())
+        return;
     m_producerThread = std::make_unique<std::thread>([this]() {
        while(m_isRunning.test()) {
            produceTasks();
        }
     });
 
+    m_consumerThread = std::make_unique<std::thread>([this]() {
+        while(m_isRunning.test()) {
+            consumeTasks();
+        }
+    });
+
+    m_poller->poll();
+
+    std::this_thread::sleep_for(std::chrono::seconds(100));
 }
 
 void Torrent::stop() {
@@ -167,44 +206,72 @@ bool Torrent::initFiles() {
     return true;
 }
 
-void Torrent::handle(const std::vector<std::byte> &rawMessage, StreamSocketPtr streamSocket) {
+void Torrent::handle(std::string const& host, const std::vector<std::byte> &rawMessage) {
     auto messages = BittorrentMessageParser::getMessages(rawMessage);
     if(messages.empty())
         return;
 
     for(auto& message: messages) {
-        Logger::logInfo(std::format("handle {} - {}", BitTorrentMessageTypeConverter::messageTypeToString(static_cast<MessageType>(message.getMessageType())), streamSocket->getInetAddress().getHost()));
-     //   m_handler.handle(message.getMessageType(), str);
+        Logger::logInfo(std::format("handle {} - {}", BitTorrentMessageTypeConverter::messageTypeToString(static_cast<MessageType>(message.getMessageType())), host));
+        m_messageHandler->handle(host, message);
     }
 }
 
-void Torrent::haveHandle(const BittorrentMessage &message, StreamSocketPtr streamSocket) {
-    auto handleSocketHost = streamSocket->getInetAddress().getHost();
-    auto peerIt = m_hostToPeer.find(streamSocket->getInetAddress().getHost());
+void Torrent::chokeHandle(const std::string &host, const std::vector<std::byte> &payload) {
+    auto it = m_hostToPeer.find(host);
+    if(it == m_hostToPeer.end()) {
+        return;
+    }
+    it->second.setStatus(PeerStatus::Choked);
+}
 
-    if(peerIt == m_hostToPeer.end())
+void Torrent::unchokeHandle(const std::string &host, const std::vector<std::byte> &payload) {
+    auto it = m_hostToPeer.find(host);
+    if(it == m_hostToPeer.end()) {
+        return;
+    }
+    it->second.setStatus(PeerStatus::Unchoked);
+}
+
+void Torrent::interestedHandle(std::string const& host, std::vector<std::byte> const& payload) {
+}
+
+void Torrent::notInterestedHandle(std::string const& host, std::vector<std::byte> const& payload) {
+
+}
+
+void Torrent::haveHandle(std::string const& host, std::vector<std::byte> const& payload) {
+    auto it = m_hostToPeer.find(host);
+
+    if(it == m_hostToPeer.end())
         return;
 
-    auto peerHost = peerIt->second.getSocket()->getInetAddress().getHost();
-    if(peerHost == handleSocketHost) {
-        peerIt->second.addPieces({static_cast<std::size_t>(message.getPayload().back())});
-    }
+    uint32_t piece = ByteMethods::convertFourBytesToNumber({payload.end() - 4, payload.end()});
+    it->second.addPieces({piece});
 }
 
-void Torrent::bitfieldHandle(const BittorrentMessage &message, StreamSocketPtr streamSocket) {
-    auto handleSocketHost = streamSocket->getInetAddress().getHost();
-    auto peerIt = m_hostToPeer.find(streamSocket->getInetAddress().getHost());
+void Torrent::bitfieldHandle(std::string const& host, std::vector<std::byte> const& payload) {
+    auto it = m_hostToPeer.find(host);
 
-    if(peerIt == m_hostToPeer.end())
+    if(it == m_hostToPeer.end())
         return;
 
-    auto peerHost = peerIt->second.getSocket()->getInetAddress().getHost();
-    if(peerHost == handleSocketHost) {
-        auto pieces = BitfieldReader::getPiecesFromBitfield(message.getPayload());
-        peerIt->second.addPieces(pieces);
-    }
+    auto pieces = BitfieldReader::getPiecesFromBitfield(payload);
+    it->second.addPieces(pieces);
 }
 
-void Torrent::pieceHandle(const BittorrentMessage &message, StreamSocketPtr streamSocket) {
-    m_files[0].writeData(message.getPayload());
+void Torrent::requestHandle(std::string const& host, std::vector<std::byte> const& payload) {
+
+}
+
+void Torrent::pieceHandle(std::string const& host, std::vector<std::byte> const& payload) {
+
+}
+
+void Torrent::cancelHandle(std::string const& host, std::vector<std::byte> const& payload) {
+
+}
+
+void Torrent::portHandle(std::string const& host, std::vector<std::byte> const& payload) {
+
 }
