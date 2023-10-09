@@ -18,7 +18,8 @@
 
 Torrent::Torrent(const std::string &filepath): m_messageHandler(std::make_unique<MessageHandler>()),
                                                m_torrentFilePath(filepath),
-                                               m_poller(std::make_unique<SocketPoller>(10,10000)) {
+                                               m_poller(std::make_unique<SocketPoller>(10,10000)),
+                                               m_timer(std::make_unique<Timer>()){
     m_poller->setReceiveMessageCallback([this](InetAddress const& address,std::vector<std::byte> const& rawMessage) {
         this->handle(address.getHost(), rawMessage);
     });
@@ -171,7 +172,7 @@ bool Torrent::initPeers() {
         auto trackerResponse = sendTrackerRequest();
         auto handshakeMessage = createHandshakeMessage();
         addPeerIfConfirmHandshake(trackerResponse.getPeers(), handshakeMessage);
-        setTimerTimeout(trackerResponse.getInterval());
+        m_timer->setTimeout(std::chrono::seconds(trackerResponse.getInterval()));
     }
     catch(std::exception& e) {
         Logger::logError(std::format("Error in Torrent::initPeers() for file: {} Error: {}", m_torrentFilePath, e.what()));
