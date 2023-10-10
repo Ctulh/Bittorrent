@@ -156,14 +156,6 @@ void Torrent::addPeerIfConfirmHandshake(std::vector<Peer> const& peers, std::str
     }
 }
 
-void Torrent::setTimerTimeout(std::uint32_t timeout) {
-    if(!m_timer) {
-        m_timer = std::make_unique<Timer>(std::chrono::seconds(timeout));
-    }
-    else {
-        m_timer->changeTimeout(std::chrono::seconds(timeout));
-    }
-}
 
 bool Torrent::initPeers() {
     if(m_timer && not m_timer->isExpired())

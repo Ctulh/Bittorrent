@@ -18,6 +18,7 @@
 #include "BittorrentTests/BittorrentMessageParserTests.hpp"
 #include "BittorrentTests/HandshakeMessageBuilderTests.hpp"
 #include "BittorrentTests/MessageHandlerTests.hpp"
+#include "BittorrentTests/BitTorrentPieceTests.hpp"
 
 // #include "UtilsTests/TimerTests.hpp"  // Takes long time to test
 

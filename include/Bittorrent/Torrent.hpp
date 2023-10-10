@@ -34,7 +34,6 @@ private:
     void addPeerIfConfirmHandshake(std::vector<Peer> const& peers, std::string const& handshakeMessage);
     std::string getInfoHash() const;
     std::string createHandshakeMessage() const;
-    void setTimerTimeout(std::uint32_t timeout);
     void produceTasks();
     void consumeTasks();
     void addFilePieceToQueue(TorrentFile const& file);
