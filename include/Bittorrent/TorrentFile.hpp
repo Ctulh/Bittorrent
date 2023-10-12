@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "TorrentFileStatus.hpp"
+#include "BitTorrentPiece.hpp"
 
 /*!
  * @brief class represents file that should be downloaded.
@@ -17,20 +18,15 @@ public:
  * @param size - the size of the file
  * @param fileOffset - sum of files size before this file
 */
-    TorrentFile(std::string const& filePath, std::size_t size, std::size_t fileOffset = 0);
+    TorrentFile(std::string const& filePath, std::size_t size, std::size_t pieceOffset, std::size_t pieceSize);
     TorrentFile(TorrentFile&& torrentFile)  noexcept = default;
-    ~TorrentFile();
+    ~TorrentFile() = default;
 
 public:
 /*!
  * @return path to the file with file name.
 */
     std::string getFilePath() const;
-
-/*!
- * @return file size.
-*/
-    std::size_t getSize() const;
 
 /*!
  * @return downloading status of the file.
@@ -43,28 +39,16 @@ public:
 */
     void writeData(std::vector<std::byte> data, std::size_t offset = 0);
 
-/*!
- * @return the wrote bytes of a file.
-*/
-    std::size_t getBytesDownloaded() const;
-
-/*!
- * @return how many bytes are left to write for this file.
-*/
-    std::size_t getBytesLeft() const;
-
-/*!
- * @return sum of files size before this file.
- */
-    std::size_t getGlobalOffset() const;
-
-    std::size_t getNextBlock() const;
+    std::vector<BitTorrentPiece> const& getPieces() const;
 
 private:
-    std::ofstream m_fileStream;
+    std::vector<BitTorrentPiece> createPieces();
+
+private:
+    std::vector<BitTorrentPiece> m_pieces;
     mutable TorrentFileStatus m_fileStatus;
-    std::size_t m_totalSize;
-    std::size_t m_bytesDownloaded;
-    std::size_t m_fileOffset;
     std::string m_filePath;
+    std::size_t m_pieceOffset;
+    std::size_t m_fileSize;
+    std::size_t m_pieceSize;
 };

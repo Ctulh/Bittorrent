@@ -39,9 +39,9 @@ Torrent::Torrent(const std::string &filepath): m_messageHandler(std::make_unique
 }
 
 void Torrent::addFilePieceToQueue(TorrentFile const& file) {
-    auto index = (file.getGlobalOffset() + file.getBytesDownloaded()) / m_pieceLength;
-    Task task(index, file.getNextBlock());
-    m_taskQueue.push(task);
+    //auto index = (file.getGlobalOffset() + file.getBytesDownloaded()) / m_pieceLength;
+  //  Task task(index, file.getNextBlock());
+  //  m_taskQueue.push(task);
 }
 
 Torrent::~Torrent() {
@@ -186,7 +186,7 @@ bool Torrent::initFiles() {
             BencodeParser fileParser(file);
             std::size_t fileSize = std::stoi(fileParser["length"]);
             std::string filePath = fileParser["path"];
-            m_files.emplace_back(filePath, fileSize, offset);
+//m_files.emplace_back(filePath, fileSize, offset);
             offset += fileSize;
         }
 

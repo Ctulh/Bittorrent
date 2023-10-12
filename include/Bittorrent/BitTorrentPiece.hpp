@@ -9,24 +9,32 @@
 #include <string>
 
 #include "Block.hpp"
+#include "Utils/FileWriter.hpp"
 
 class BitTorrentPiece {
 public:
-    BitTorrentPiece(uint32_t pieceIndex, uint32_t pieceSize, uint32_t fileOffset, std::string filepath, uint32_t blockSize = BLOCK_SIZE): m_pieceIndex(pieceIndex), m_pieceSize(pieceSize), m_fileOffset(fileOffset), m_blockSize(blockSize), m_filepath(filepath) {}
+    BitTorrentPiece(uint32_t pieceIndex, uint32_t pieceSize, uint32_t pieceOffset, std::string filepath, uint32_t blockSize = BLOCK_SIZE);
 
 public:
-    void writeData(uint32_t blockOffset, std::vector<std::byte> const& rawData);
+    void writeBlock(uint32_t blockOffset, std::vector<std::byte> const& rawData);
+    void saveOnDisk() const;
+
     std::vector<Block> const& getBlocks() const;
+    std::vector<Block> getIncompleteBlocks();
+    bool isComplete() const;
 
 private:
     std::vector<Block> generateBlocks() const;
 
 
 private:
-    uint32_t m_pieceIndex;
+    uint32_t m_pieceOffset;
     uint32_t m_pieceSize;
     uint32_t m_fileOffset;
     uint32_t m_blockSize;
     std::vector<Block> m_blocks;
     std::string m_filepath;
+    FileWriter m_fileWriter;
+    uint32_t m_blocksAmount;
+    uint32_t m_completeBlocksAmount;
 };

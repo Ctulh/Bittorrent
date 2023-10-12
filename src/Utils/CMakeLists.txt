@@ -13,7 +13,8 @@ set(SOURCES StringMethods.cpp
         HashMethods.cpp
         UrlMethods.cpp
         ByteMethods.cpp
-        Timer.cpp)
+        Timer.cpp
+        FileWriter.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
